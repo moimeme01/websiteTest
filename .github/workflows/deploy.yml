@@ -21,8 +21,11 @@ jobs:
       - name: Install npm dependencies
         run: npm ci  # faster and more reliable than npm install on CI
 
-      - name: Run build
-        run: npm run build  # creates build/ (CRA) or dist/ (Vite)
+      - name: Build portfolio app
+        run: |
+          cd portfolio
+          npm ci
+          npm run build
 
       - name: Deploy via rsync over SSH
         uses: easingthemes/ssh-deploy@v5.1.0
@@ -31,7 +34,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
           REMOTE_USER: ${{ secrets.DEPLOY_USER }}
           REMOTE_PORT: 2222
-          SOURCE: "/portfolio/build/"
+          SOURCE: "/."
           TARGET: ${{ secrets.DEPLOY_PATH }}
           ARGS: "-rlgoDzvc -i --delete"
           EXCLUDE: ".git/, .github/, node_modules/, src/"
