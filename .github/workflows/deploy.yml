@@ -12,6 +12,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'  # or '18', stable version
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci  # faster and more reliable than npm install on CI
+
+      - name: Run build
+        run: npm run build  # creates build/ (CRA) or dist/ (Vite)
+
       - name: Deploy via rsync over SSH
         uses: easingthemes/ssh-deploy@v5.1.0
         with:
@@ -19,14 +31,12 @@ jobs:
           REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
           REMOTE_USER: ${{ secrets.DEPLOY_USER }}
           REMOTE_PORT: 2222
-          # Chemin de TON repo dans le runner -> tout le repo
-          SOURCE: "./"
-          # Chemin ABSOLU sur ton Mac (voir point 2 ci-dessous)
+          # Change to "build/" for CRA or "dist/" for Vite
+          SOURCE: "build/"  # ← THIS IS THE KEY CHANGE: only deploy the build output
           TARGET: ${{ secrets.DEPLOY_PATH }}
-          # Options rsync simples et propres
           ARGS: "-rlgoDzvc -i --delete"
-          # On exclut le dossier GitHub et .git via le paramètre prévu
-          EXCLUDE: ".git/, .github/"
-          # Petit script pour forcer une connexion SSH avant rsync si besoin
-          SCRIPT_BEFORE: "ls"
+          EXCLUDE: ".git/, .github/, node_modules/, src/"
+          SCRIPT_BEFORE: |
+            ls -la
+            echo "Deploying to $TARGET"
           SSH_CMD_ARGS: "-o StrictHostKeyChecking=no"
