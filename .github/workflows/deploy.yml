@@ -17,6 +17,7 @@ jobs:
         with:
           node-version: '20'  # or '18', stable version
           cache: 'npm'
+          cache-dependency-path: 'portfolio/package-lock.json'
 
       - name: Build portfolio app
         run: |
