@@ -18,9 +18,6 @@ jobs:
           node-version: '20'  # or '18', stable version
           cache: 'npm'
 
-      - name: Install npm dependencies
-        run: npm ci  # faster and more reliable than npm install on CI
-
       - name: Build portfolio app
         run: |
           cd portfolio
@@ -34,7 +31,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
           REMOTE_USER: ${{ secrets.DEPLOY_USER }}
           REMOTE_PORT: 2222
-          SOURCE: "/."
+          SOURCE: "./"
           TARGET: ${{ secrets.DEPLOY_PATH }}
           ARGS: "-rlgoDzvc -i --delete"
           EXCLUDE: ".git/, .github/, node_modules/, src/"
