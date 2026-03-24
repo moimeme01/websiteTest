@@ -16,14 +16,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'  # or '18', stable version
-          cache: 'npm'
-          cache-dependency-path: 'portfolio/package-lock.json'
+          cache: ''
 
       - name: Build portfolio app
         run: |
-          cd portfolio
-          npm ci
-          npm run build
+          
 
       - name: Deploy via rsync over SSH
         uses: easingthemes/ssh-deploy@v5.1.0
