@@ -12,13 +12,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Rsync files to server
-        uses: easingthemes/ssh-deploy@v4.1.8
+      - name: Deploy via rsync over SSH
+        uses: easingthemes/ssh-deploy@v5.1.0
         with:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
           REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
           REMOTE_USER: ${{ secrets.DEPLOY_USER }}
           REMOTE_PORT: 22
-          SOURCE: ./
+          # Chemin de TON repo dans le runner -> tout le repo
+          SOURCE: "./"
+          # Chemin ABSOLU sur ton Mac (voir point 2 ci-dessous)
           TARGET: ${{ secrets.DEPLOY_PATH }}
-          ARGS: "-avzr --delete --exclude '.git*' --exclude '.github/'"
+          # Options rsync simples et propres
+          ARGS: "-rlgoDzvc -i --delete"
+          # On exclut le dossier GitHub et .git via le paramètre prévu
+          EXCLUDE: ".git/, .github/"
+          # Petit script pour forcer une connexion SSH avant rsync si besoin
+          SCRIPT_BEFORE: "ls"
+          SSH_CMD_ARGS: "-o StrictHostKeyChecking=no"
