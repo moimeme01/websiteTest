@@ -18,7 +18,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
           REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
           REMOTE_USER: ${{ secrets.DEPLOY_USER }}
-          REMOTE_PORT: 22
+          REMOTE_PORT: 2222
           # Chemin de TON repo dans le runner -> tout le repo
           SOURCE: "./"
           # Chemin ABSOLU sur ton Mac (voir point 2 ci-dessous)
