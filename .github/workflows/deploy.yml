@@ -12,21 +12,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Installer la clé SSH et known_hosts
-      - name: Setup SSH key
-        uses: kielabokkie/ssh-key-and-known-hosts-action@v1
-        with:
-          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
-          ssh-host: ${{ secrets.DEPLOY_HOST }}
-
-      # Déployer via rsync
       - name: Rsync files to server
         uses: easingthemes/ssh-deploy@v4.1.8
         with:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
           REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
           REMOTE_USER: ${{ secrets.DEPLOY_USER }}
           REMOTE_PORT: 22
           SOURCE: ./
           TARGET: ${{ secrets.DEPLOY_PATH }}
           ARGS: "-avzr --delete --exclude '.git*' --exclude '.github/'"
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
