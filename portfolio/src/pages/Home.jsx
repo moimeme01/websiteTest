@@ -11,27 +11,47 @@ function Home() {
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+      <section id="header">
+        <div id="Home">
+          <h2> Thibault Vanni</h2>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
+        <div id="about">
+          <h3> <code> 01.</code> About</h3>
         </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          count {count}
-        </button>
+        <div id="projects">
+          <h3>  <code> 02.</code> Projects </h3>
+        </div>
+        <div id="contact"> 
+          <h3> <code>03.</code> Contact</h3>
+        </div>
+        <div id="resume">
+          <h3> Resume</h3>
+        </div>
       </section>
 
       <div className="ticks"></div>
+
+      <section id="About">
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt 
+            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi 
+            ut aliquip ex ea commodo consequat.
+
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla 
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+      </section>
+
+      <section id="Project">
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt 
+            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi 
+            ut aliquip ex ea commodo consequat.
+
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla 
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+      </section>
 
       <section id="next-steps">
         <div id="docs">
@@ -39,7 +59,27 @@ function Home() {
             <use href="./icons.svg#documentation-icon"></use>
           </svg>
           <h2>Documentation</h2>
-          <p>Your questions, answered</p>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt 
+            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi 
+            ut aliquip ex ea commodo consequat.
+
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla 
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt 
+            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi 
+            ut aliquip ex ea commodo consequat.
+
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla 
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt 
+            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi 
+            ut aliquip ex ea commodo consequat.
+
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla 
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+          </p>
           <ul>
             <li>
               <a href="https://vite.dev/" target="_blank">
@@ -125,6 +165,42 @@ function Home() {
             <button className="btn-famille">Ma Famille</button>
         </Link>
       </section>  
+
+
+      <div id="social">
+        <svg className="icon" role="presentation" aria-hidden="true">
+          <use href="./icons.svg#social-icon"></use>
+        </svg>
+        <h2>Connect with me</h2>
+        <p>Join me on my social networks</p>
+        <ul>
+          <li>
+            <a href="https://github.com/moimeme01" target="_blank">
+              <svg
+                className="button-icon"
+                role="presentation"
+                aria-hidden="true"
+              >
+                <use href="./icons.svg#github-icon"></use>
+              </svg>
+              GitHub
+            </a>
+          </li>
+          <li>
+            <a href="https://www.linkedin.com/in/thibault-vanni" target="_blank">
+              <svg
+                className="button-icon"
+                role="presentation"
+                aria-hidden="true"
+              >
+                <use href="./icons.svg#linkedin-icon"></use>
+              </svg>
+              Linkedin
+            </a>
+          </li>
+        </ul>
+      </div>
+
     </>
   )
 }

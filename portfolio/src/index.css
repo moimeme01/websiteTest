@@ -55,7 +55,7 @@ body {
 }
 
 #root {
-  width: 1126px;
+  width: 100vw;
   max-width: 100%;
   margin: 0 auto;
   text-align: center;
@@ -66,8 +66,7 @@ body {
   box-sizing: border-box;
 }
 
-h1,
-h2 {
+h1,h2, h3 {
   font-family: var(--heading);
   font-weight: 500;
   color: var(--text-h);
@@ -91,12 +90,16 @@ h2 {
     font-size: 20px;
   }
 }
+h3 {
+  font-size: 13px;
+  letter-spacing: -0.12px;
+}
+
 p {
   margin: 0;
 }
 
-code,
-.counter {
+code, .counter {
   font-family: var(--mono);
   display: inline-flex;
   border-radius: 4px;
@@ -104,8 +107,7 @@ code,
 }
 
 code {
-  font-size: 15px;
+  font-size: 13px;
   line-height: 135%;
   padding: 4px 8px;
-  background: var(--code-bg);
 }

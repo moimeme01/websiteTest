@@ -18,9 +18,7 @@ function Famille(){
                 </div>
                 <div>
                     <h4>Si tu atterris ici c'est que tu fais pasrtie de ma famille. (ou que t'es un bon hacker)</h4>
-                    <p>
                     
-                    </p>
                 </div>
                 
             </section>
