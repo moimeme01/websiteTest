@@ -1,6 +1,7 @@
 :root {
   --text: #6b6375;
   --text-h: #08060d;
+  --code-text: #008000;
   --bg: #fff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
@@ -64,6 +65,7 @@ body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 h1,h2, h3 {
@@ -95,6 +97,37 @@ h3 {
   letter-spacing: -0.12px;
 }
 
+
+.about-text {
+  font-size: 17px;
+  line-height: 118%;
+  max-width: 30%;
+  letter-spacing: -0.24px;
+  text-align: left;
+  margin: 0 0 8px;
+  @media (max-width: 1024px) {
+    font-size: 13px;
+  }
+}
+
+.about-title-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+
+.code-title, .about-title {
+  line-height: 135%;
+  font-size: 25px;
+  padding: 4px 8px;
+}
+
+.about-title {
+  font-weight: 700;
+}
+
+
 p {
   margin: 0;
 }
@@ -103,7 +136,7 @@ code, .counter {
   font-family: var(--mono);
   display: inline-flex;
   border-radius: 4px;
-  color: var(--text-h);
+  color: var(--code-text);
 }
 
 code {

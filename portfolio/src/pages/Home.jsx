@@ -12,17 +12,17 @@ function Home() {
   return (
     <>
       <section id="header">
-        <div id="Home">
+        <div id="home">
           <h2> Thibault Vanni</h2>
         </div>
         <div id="about">
-          <h3> <code> 01.</code> About</h3>
+          <a href="#About" class="nav-link"> <h3> <code> 01.</code>About</h3> </a>
         </div>
         <div id="projects">
-          <h3>  <code> 02.</code> Projects </h3>
+          <h3>  <code> 02.</code>Projects </h3>
         </div>
         <div id="contact"> 
-          <h3> <code>03.</code> Contact</h3>
+          <h3> <code>03.</code>Contact</h3>
         </div>
         <div id="resume">
           <h3> Resume</h3>
@@ -31,14 +31,24 @@ function Home() {
 
       <div className="ticks"></div>
 
-      <section id="About">
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt 
-            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi 
-            ut aliquip ex ea commodo consequat.
+      <section id="Home">
+        <p class="about-text">
+            <code>Hi, my name is </code>
+            <h1>Thibault Vanni</h1>
+            I'm actually student at Université Catholique de Louvain in Louvain-la-Neuve (Belgium).
+        </p>
+      </section>
 
-            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla 
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      <section id="About">
+        <div class='about-title-container'>
+          <code class="code-title">01. </code> <span class="about-title">About me</span>
+        </div>
+        <p class="about-text">
+          Hello! My name is Thibault, and I'm currently a student at Université Catholique de Louvain in Louvain-la-Neuve, Belgium. 
+          I've almost completed a bachelor's degree in civil engineering with minors in mechanics and electronics. Currently, 
+          I'm pursuing a master's degree in informatics. In addition to my studies, I'm actively involved in various personal projects, primarily using Python, 
+          but also experimenting with CSS and JSX.
+
         </p>
       </section>
 
