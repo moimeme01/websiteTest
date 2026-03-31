@@ -24,6 +24,12 @@ jobs:
           cd portfolio
           npm ci
           npm run build
+          
+      - name: Build streaming app
+        run: |
+          cd streaming
+          npm ci
+          npm run build
 
       - name: Deploy via rsync over SSH
         uses: easingthemes/ssh-deploy@v5.1.0
