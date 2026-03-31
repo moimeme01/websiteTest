@@ -1,0 +1,54 @@
+.
+├── index.html
+├── package-lock.json
+├── package.json
+├── portfolio
+│   ├── README.md
+│   ├── dist
+│   │   ├── assets
+│   │   │   ├── hero-5sT3BiRD.png
+│   │   │   ├── index-BvVFMjaZ.js
+│   │   │   ├── index-DykytF2W.css
+│   │   │   ├── react-CHdo91hT.svg
+│   │   │   └── vite-BF8QNONU.svg
+│   │   ├── favicon.svg
+│   │   ├── icons.svg
+│   │   └── index.html
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── src
+│   │   ├── App.css
+│   │   ├── App.jsx
+│   │   ├── assets
+│   │   │   ├── hero.png
+│   │   │   ├── react.svg
+│   │   │   └── vite.svg
+│   │   ├── index.css
+│   │   ├── main.jsx
+│   │   └── pages
+│   │       ├── Famille.jsx
+│   │       └── Home.jsx
+│   └── vite.config.js
+├── streaming
+│   ├── README.md
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── src
+│   │   ├── App.css
+│   │   ├── App.jsx
+│   │   ├── assets
+│   │   │   ├── hero.png
+│   │   │   ├── react.svg
+│   │   │   └── vite.svg
+│   │   ├── index.css
+│   │   ├── main.jsx
+│   │   └── pages
+│   │       └── Home.jsx
+│   └── vite.config.js
+└── tree.txt
+
+11 directories, 41 files
