@@ -17,7 +17,9 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: 'portfolio/package-lock.json'
+          cache-dependency-path:  |
+            'portfolio/package-lock.json'
+            'streaming/package-lock.json'
 
       - name: Build portfolio app
         run: |
