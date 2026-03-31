@@ -24,14 +24,30 @@ jobs:
           cd portfolio
           npm ci
           npm run build
-          
+
       - name: Build streaming app
         run: |
           cd streaming
           npm ci
           npm run build
+      
+      - name: Deploy root index.html
+        uses: easingthemes/ssh-deploy@v5.1.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
+          REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
+          REMOTE_USER: ${{ secrets.DEPLOY_USER }}
+          REMOTE_PORT: 2222
+          SOURCE: "index.html"
+          TARGET: ${{ secrets.DEPLOY_PATH }}
+          ARGS: "-rlgoDzvc -i --delete"
+          EXCLUDE: ""
+          SCRIPT_BEFORE: |
+            ls -la
+            echo "Deploying to $TARGET"
+          SSH_CMD_ARGS: "-o StrictHostKeyChecking=no"
 
-      - name: Deploy via rsync over SSH
+      - name: Deploy portfolio via rsync over SSH
         uses: easingthemes/ssh-deploy@v5.1.0
         with:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
@@ -40,6 +56,22 @@ jobs:
           REMOTE_PORT: 2222
           SOURCE: "portfolio/dist/"
           TARGET: ${{ secrets.DEPLOY_PATH }}/portfolio
+          ARGS: "-rlgoDzvc -i --delete"
+          EXCLUDE: ""
+          SCRIPT_BEFORE: |
+            ls -la
+            echo "Deploying to $TARGET"
+          SSH_CMD_ARGS: "-o StrictHostKeyChecking=no"
+      
+      - name: Deploy streaming via rsync over SSH
+        uses: easingthemes/ssh-deploy@v5.1.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
+          REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
+          REMOTE_USER: ${{ secrets.DEPLOY_USER }}
+          REMOTE_PORT: 2222
+          SOURCE: "streaming/dist/"
+          TARGET: ${{ secrets.DEPLOY_PATH }}/streaming
           ARGS: "-rlgoDzvc -i --delete"
           EXCLUDE: ""
           SCRIPT_BEFORE: |
