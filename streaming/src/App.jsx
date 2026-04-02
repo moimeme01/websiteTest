@@ -1,15 +1,12 @@
 import { Routes, Route } from 'react-router-dom'
-import Home from './pages/Home'
-
-import './App.css'
+import StreamingBrowser from './pages/StreamingBrowser'
 
 function App() {
-
   return (
     <Routes>
-      <Route path='/' element={<Home />} />
+      <Route path="/" element={<StreamingBrowser />} />
     </Routes>
   )
 }
 
-export default App;
+export default App
