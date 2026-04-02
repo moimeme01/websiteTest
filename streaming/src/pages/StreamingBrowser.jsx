@@ -1,9 +1,26 @@
 import { useEffect, useState } from 'react'
+import './StreamingBrowser.css'
+
+const VIDEO_EXT = /\.(mp4|webm|ogg|mov|m4v)$/i
+const IMAGE_EXT = /\.(jpg|jpeg|png|webp|gif|avif|svg)$/i
+
+function formatSize(size) {
+  if (size == null) return ''
+  const units = ['B', 'KB', 'MB', 'GB']
+  let value = size
+  let i = 0
+
+  while (value >= 1024 && i < units.length - 1) {
+    value /= 1024
+    i++
+  }
+
+  return `${value.toFixed(1)} ${units[i]}`
+}
 
 export default function StreamingBrowser() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [debug, setDebug] = useState('')
   const [entries, setEntries] = useState([])
 
   useEffect(() => {
@@ -11,7 +28,6 @@ export default function StreamingBrowser() {
       try {
         setLoading(true)
         setError('')
-        setDebug('')
 
         const res = await fetch('http://thibaultvanni.ovh/streaming/files/')
 
@@ -20,12 +36,6 @@ export default function StreamingBrowser() {
         }
 
         const data = await res.json()
-        console.log('data =', data)
-
-        setDebug(
-          `URL: /streaming/files/\nHTTP: ${res.status}\n\n${JSON.stringify(data, null, 2)}`
-        )
-
         setEntries(data)
       } catch (e) {
         setError(String(e))
@@ -37,34 +47,60 @@ export default function StreamingBrowser() {
     load()
   }, [])
 
-  useEffect(() => {
-    console.log('entries mis à jour =', entries)
-  }, [entries])
-
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Streaming</h1>
+    <div className="streaming-page">
+      <header className="streaming-header">
+        <h1>Streaming</h1>
+        <p>{entries.length} fichier(s)</p>
+      </header>
 
       {loading && <p>Chargement...</p>}
-      {error && (
-        <pre style={{ color: 'red', whiteSpace: 'pre-wrap' }}>
-          {error}
-        </pre>
+      {error && <pre className="error-box">{error}</pre>}
+
+      {!loading && !error && (
+        <div className="media-grid">
+          {entries.map((entry) => {
+            const url = `http://thibaultvanni.ovh/streaming/files/${encodeURIComponent(entry.name)}`
+            const isVideo = VIDEO_EXT.test(entry.name)
+            const isImage = IMAGE_EXT.test(entry.name)
+
+            return (
+              <article key={entry.name} className="media-card">
+                <div className="media-preview">
+                  {isImage ? (
+                    <img src={url} alt={entry.name} />
+                  ) : isVideo ? (
+                    <video controls preload="metadata">
+                      <source src={url} type="video/quicktime" />
+                      Ton navigateur ne supporte pas cette vidéo.
+                    </video>
+                  ) : (
+                    <div className="file-fallback">Aperçu non disponible</div>
+                  )}
+                </div>
+
+                <div className="media-body">
+                  <h2 className="media-title">{entry.name}</h2>
+                  <p className="media-meta">
+                    {entry.type} • {formatSize(entry.size)}
+                  </p>
+                  <p className="media-date">
+                    {new Date(entry.mtime).toLocaleString()}
+                  </p>
+                  <a
+                    className="media-link"
+                    href={url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Ouvrir le fichier
+                  </a>
+                </div>
+              </article>
+            )
+          })}
+        </div>
       )}
-
-      <pre style={{ whiteSpace: 'pre-wrap', background: '#f5f5f5', padding: 12 }}>
-        {debug}
-      </pre>
-
-      <p>Nombre: {entries.length}</p>
-
-      <ul>
-        {entries.map((entry) => (
-          <li key={entry.name}>
-            {entry.type} - {entry.name}
-          </li>
-        ))}
-      </ul>
     </div>
   )
 }
