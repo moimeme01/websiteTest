@@ -84,6 +84,7 @@ export default function StreamingBrowser() {
                   <p className="media-meta">
                     {entry.type} • {formatSize(entry.size)}
                   </p>
+                  
                   <p className="media-date">
                     {new Date(entry.mtime).toLocaleString()}
                   </p>

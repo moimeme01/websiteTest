@@ -1,0 +1,13 @@
+import express from "express";
+
+const router = express.Router();
+
+const {
+    register
+} = require("../controllers/authController");
+
+
+router.post("/", register);
+
+
+module.exports = router;
