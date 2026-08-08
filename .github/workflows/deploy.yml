@@ -126,9 +126,6 @@ jobs:
           TARGET: /Users/thibault/apps/studUPMock-backend/
           ARGS: "-rlgoDzvc -i --delete"
           EXCLUDE: ".env,.venv,.*log"
-          SCRIPT_BEFORE: |
-            ls -la
-            echo "Deploying to $TARGET"
           SSH_CMD_ARGS: "-o StrictHostKeyChecking=no"
 
       - name: Install dependencies and restart FastAPI
@@ -139,28 +136,62 @@ jobs:
           port: 2222
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
+            set -eu        
             
             BACKEND_DIR="/Users/thibault/apps/studUPMock-backend"
             PLIST="/Users/thibault/Library/LaunchAgents/com.thibault.studupmock-api.plist"
             LABEL="com.thibault.studupmock-api"
-            UID=$(id -u)
-            
-            cd /Users/thibault/apps/studUPMock-backend
+            CURRENT_UID="$(id -u)"
 
+            cd "$BACKEND_DIR"
+
+            echo "--- Checking backend files ---"
+
+            test -f ".env"
+            test -f "requirements.txt"
+            test -f "settings.py"
+
+            echo "--- Creating virtual environment ---"
             python3 -m venv .venv
-            .venv/bin/pip install --upgrade pip
-            .venv/bin/pip install -r requirements.txt
 
-            if launchctl print gui/$UID/$LABEL >/dev/null 2>&1; then
-                echo "FastAPI est déjà chargé : redémarrage du service"
-                launchctl kickstart -k gui/$UID/$LABEL
-            else
-                echo "FastAPI n'est pas chargé : démarrage du service"
-                launchctl bootstrap gui/$UID "$PLIST"
-                launchctl kickstart -k gui/$UID/$LABEL
-            fi
-            launchctl unload /Users/thibault/Library/LaunchAgents/com.thibault.studupmock-api.plist || true
-            launchctl load /Users/thibault/Library/LaunchAgents/com.thibault.studupmock-api.plist
+            echo "--- Installing dependencies ---"
+            .venv/bin/python -m pip install --upgrade pip
+            .venv/bin/python -m pip install -r requirements.txt
+            
+            echo "--- Testing settings ---"
+            .venv/bin/python -c \
+              "from settings import Settings; s=Settings(); assert s.DATABASE_URL; print('DATABASE_URL loaded')"
 
-            sleep 2
-            curl --fail http://127.0.0.1:8000/users/
+            echo "--- Testing FastAPI import ---"
+            .venv/bin/python -c \
+              "from app.main import app; print('FastAPI import OK')"
+
+            echo "--- Stopping existing LaunchAgent ---"
+            launchctl bootout "gui/$CURRENT_UID/$LABEL" 2>/dev/null || true
+
+            echo "--- Starting LaunchAgent ---"
+            launchctl bootstrap "gui/$CURRENT_UID" "$PLIST"
+
+            echo "--- Waiting for FastAPI ---"
+            for i in $(seq 1 30); do
+              if curl --silent --show-error --fail \
+                http://127.0.0.1:8000/users/ > /dev/null; then
+                echo "FastAPI is responding"
+                exit 0
+              fi
+
+              sleep 1
+            done
+
+            echo "--- FastAPI failed to start ---"
+
+            echo "--- launchctl status ---"
+            launchctl print "gui/$CURRENT_UID/$LABEL" || true
+
+            echo "--- backend error log ---"
+            tail -n 100 "$BACKEND_DIR/api-error.log" || true
+
+            echo "--- backend output log ---"
+            tail -n 100 "$BACKEND_DIR/api.log" || true
+
+            exit 1
