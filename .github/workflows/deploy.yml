@@ -123,7 +123,7 @@ jobs:
           REMOTE_USER: ${{ secrets.DEPLOY_USER }}
           REMOTE_PORT: 2222
           SOURCE: "studUPMock/backend/"
-          TARGET: $/Users/thibault/apps/studUPMock-backend/
+          TARGET: /Users/thibault/apps/studUPMock-backend/
           ARGS: "-rlgoDzvc -i --delete"
           EXCLUDE: ".env,.venv,.*log"
           SCRIPT_BEFORE: |
