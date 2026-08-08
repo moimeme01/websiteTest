@@ -33,6 +33,12 @@ jobs:
           npm ci
           npm run build
       
+      - name: Build studUP
+        run: |
+          cd studUPMock
+          npm ci
+          npm run build
+      
       - name: Deploy root index.html
         uses: easingthemes/ssh-deploy@v5.1.0
         with:
@@ -74,6 +80,22 @@ jobs:
           REMOTE_PORT: 2222
           SOURCE: "streaming/dist/"
           TARGET: ${{ secrets.DEPLOY_PATH }}/streaming
+          ARGS: "-rlgoDzvc -i --delete"
+          EXCLUDE: ""
+          SCRIPT_BEFORE: |
+            ls -la
+            echo "Deploying to $TARGET"
+          SSH_CMD_ARGS: "-o StrictHostKeyChecking=no"
+      
+      - name: Deploy studup via rsync over SSH
+        uses: easingthemes/ssh-deploy@v5.1.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
+          REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
+          REMOTE_USER: ${{ secrets.DEPLOY_USER }}
+          REMOTE_PORT: 2222
+          SOURCE: "stuUP/dist/"
+          TARGET: ${{ secrets.DEPLOY_PATH }}/studUPMock
           ARGS: "-rlgoDzvc -i --delete"
           EXCLUDE: ""
           SCRIPT_BEFORE: |
