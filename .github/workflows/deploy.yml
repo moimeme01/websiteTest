@@ -34,12 +34,23 @@ jobs:
           npm ci
           npm run build
       
-      - name: Build studUP
+      - name: Build studUPMock frontend
         run: |
           cd studUPMock
           npm ci
           npm run build
-      
+
+      - name: Prepare backend directory
+        uses: appleboy/ssh-action@v1.2.0
+        with: 
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: 2222
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: | 
+            mkdir -p /Users/thibault/apps/studUPMock-backend
+            mkdir -p /Users/thibault/www/websiteTest-deploy/studUPMock
+
       - name: Deploy root index.html
         uses: easingthemes/ssh-deploy@v5.1.0
         with:
@@ -96,10 +107,46 @@ jobs:
           REMOTE_USER: ${{ secrets.DEPLOY_USER }}
           REMOTE_PORT: 2222
           SOURCE: "studUPMock/dist/"
-          TARGET: ${{ secrets.DEPLOY_PATH }}/studUPMock
+          TARGET: ${{ secrets.DEPLOY_PATH }}/studUPMock/
           ARGS: "-rlgoDzvc -i --delete"
           EXCLUDE: ""
           SCRIPT_BEFORE: |
             ls -la
             echo "Deploying to $TARGET"
           SSH_CMD_ARGS: "-o StrictHostKeyChecking=no"
+
+      - name: Deploy FastAPI backend 
+        uses: easingthemes/ssh-deploy@v5.1.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
+          REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
+          REMOTE_USER: ${{ secrets.DEPLOY_USER }}
+          REMOTE_PORT: 2222
+          SOURCE: "studUPMock/backend/"
+          TARGET: $/Users/thibault/apps/studUPMock-backend/
+          ARGS: "-rlgoDzvc -i --delete"
+          EXCLUDE: ".env,.venv,.*log"
+          SCRIPT_BEFORE: |
+            ls -la
+            echo "Deploying to $TARGET"
+          SSH_CMD_ARGS: "-o StrictHostKeyChecking=no"
+
+      - name: Install dependencies and restart FastAPI
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: 2222
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            cd /Users/thibault/apps/studUPMock-backend
+
+            python3 -m venv .venv
+            .venv/bin/pip install --upgrade pip
+            .venv/bin/pip install -r requirements.txt
+
+            launchctl unload /Users/thibault/Library/LaunchAgents/com.thibault.studupmock-api.plist || true
+            launchctl load /Users/thibault/Library/LaunchAgents/com.thibault.studupmock-api.plist
+
+            sleep 2
+            curl --fail http://127.0.0.1:8000/api/health
