@@ -149,4 +149,4 @@ jobs:
             launchctl load /Users/thibault/Library/LaunchAgents/com.thibault.studupmock-api.plist
 
             sleep 2
-            curl --fail http://127.0.0.1:8000/api/health
+            curl --fail http://127.0.0.1:8000/users/
