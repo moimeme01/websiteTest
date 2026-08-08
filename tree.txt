@@ -5,50 +5,36 @@
 ├── portfolio
 │   ├── README.md
 │   ├── dist
-│   │   ├── assets
-│   │   │   ├── hero-5sT3BiRD.png
-│   │   │   ├── index-BvVFMjaZ.js
-│   │   │   ├── index-DykytF2W.css
-│   │   │   ├── react-CHdo91hT.svg
-│   │   │   └── vite-BF8QNONU.svg
-│   │   ├── favicon.svg
-│   │   ├── icons.svg
-│   │   └── index.html
 │   ├── eslint.config.js
 │   ├── index.html
+│   ├── node_modules
 │   ├── package-lock.json
 │   ├── package.json
+│   ├── public
 │   ├── src
-│   │   ├── App.css
-│   │   ├── App.jsx
-│   │   ├── assets
-│   │   │   ├── hero.png
-│   │   │   ├── react.svg
-│   │   │   └── vite.svg
-│   │   ├── index.css
-│   │   ├── main.jsx
-│   │   └── pages
-│   │       ├── Famille.jsx
-│   │       └── Home.jsx
 │   └── vite.config.js
 ├── streaming
 │   ├── README.md
+│   ├── dist
 │   ├── eslint.config.js
 │   ├── index.html
+│   ├── node_modules
 │   ├── package-lock.json
 │   ├── package.json
+│   ├── public
 │   ├── src
-│   │   ├── App.css
-│   │   ├── App.jsx
-│   │   ├── assets
-│   │   │   ├── hero.png
-│   │   │   ├── react.svg
-│   │   │   └── vite.svg
-│   │   ├── index.css
-│   │   ├── main.jsx
-│   │   └── pages
-│   │       └── Home.jsx
+│   └── vite.config.js
+├── studUPMock
+│   ├── README.md
+│   ├── backend
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── node_modules
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── public
+│   ├── src
 │   └── vite.config.js
 └── tree.txt
 
-11 directories, 41 files
+16 directories, 22 files
