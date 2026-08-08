@@ -139,12 +139,26 @@ jobs:
           port: 2222
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
+            
+            BACKEND_DIR="/Users/thibault/apps/studUPMock-backend"
+            PLIST="/Users/thibault/Library/LaunchAgents/com.thibault.studupmock-api.plist"
+            LABEL="com.thibault.studupmock-api"
+            UID=$(id -u)
+            
             cd /Users/thibault/apps/studUPMock-backend
 
             python3 -m venv .venv
             .venv/bin/pip install --upgrade pip
             .venv/bin/pip install -r requirements.txt
 
+            if launchctl print gui/$UID/$LABEL >/dev/null 2>&1; then
+                echo "FastAPI est déjà chargé : redémarrage du service"
+                launchctl kickstart -k gui/$UID/$LABEL
+            else
+                echo "FastAPI n'est pas chargé : démarrage du service"
+                launchctl bootstrap gui/$UID "$PLIST"
+                launchctl kickstart -k gui/$UID/$LABEL
+            fi
             launchctl unload /Users/thibault/Library/LaunchAgents/com.thibault.studupmock-api.plist || true
             launchctl load /Users/thibault/Library/LaunchAgents/com.thibault.studupmock-api.plist
 
