@@ -167,10 +167,10 @@ jobs:
               "from app.main import app; print('FastAPI import OK')"
 
             echo "--- Stopping existing LaunchAgent ---"
-            launchctl bootout "gui/$CURRENT_UID/$LABEL" 2>/dev/null || true
+            launchctl bootout "user/$CURRENT_UID/$LABEL" 2>/dev/null || true
 
             echo "--- Starting LaunchAgent ---"
-            launchctl bootstrap "gui/$CURRENT_UID" "$PLIST"
+            launchctl bootstrap "user/$CURRENT_UID" "$PLIST"
 
             echo "--- Waiting for FastAPI ---"
             for i in $(seq 1 30); do
