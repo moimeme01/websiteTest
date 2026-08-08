@@ -42,12 +42,12 @@ jobs:
 
       - name: Prepare backend directory
         uses: appleboy/ssh-action@v1.2.0
-        with: 
+        with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           port: 2222
           key: ${{ secrets.DEPLOY_KEY }}
-          script: | 
+          script: |
             mkdir -p /Users/thibault/apps/studUPMock-backend
             mkdir -p /Users/thibault/www/websiteTest-deploy/studUPMock
 
@@ -115,7 +115,7 @@ jobs:
             echo "Deploying to $TARGET"
           SSH_CMD_ARGS: "-o StrictHostKeyChecking=no"
 
-      - name: Deploy FastAPI backend 
+      - name: Deploy FastAPI backend
         uses: easingthemes/ssh-deploy@v5.1.0
         with:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
@@ -124,8 +124,8 @@ jobs:
           REMOTE_PORT: 2222
           SOURCE: "studUPMock/backend/"
           TARGET: /Users/thibault/apps/studUPMock-backend/
+          EXCLUDE: ".env,.venv,.*log,database.db,*.db,__pycache__"
           ARGS: "-rlgoDzvc -i --delete"
-          EXCLUDE: ".env,.venv,.*log"
           SSH_CMD_ARGS: "-o StrictHostKeyChecking=no"
 
       - name: Install dependencies and restart FastAPI
@@ -136,8 +136,8 @@ jobs:
           port: 2222
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
-            set -eu        
-            
+            set -eu
+
             BACKEND_DIR="/Users/thibault/apps/studUPMock-backend"
             PLIST="/Users/thibault/Library/LaunchAgents/com.thibault.studupmock-api.plist"
             LABEL="com.thibault.studupmock-api"
@@ -150,6 +150,7 @@ jobs:
             test -f ".env"
             test -f "requirements.txt"
             test -f "settings.py"
+            test -f "alembic.ini"
 
             echo "--- Creating virtual environment ---"
             python3 -m venv .venv
@@ -157,10 +158,13 @@ jobs:
             echo "--- Installing dependencies ---"
             .venv/bin/python -m pip install --upgrade pip
             .venv/bin/python -m pip install -r requirements.txt
-            
+
             echo "--- Testing settings ---"
             .venv/bin/python -c \
               "from settings import Settings; s=Settings(); assert s.DATABASE_URL; print('DATABASE_URL loaded')"
+
+            echo "--- Running database migrations ---"
+            .venv/bin/alembic upgrade head
 
             echo "--- Testing FastAPI import ---"
             .venv/bin/python -c \
