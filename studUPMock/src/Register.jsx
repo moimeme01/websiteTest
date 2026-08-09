@@ -92,7 +92,7 @@ const Register = () => {
                     <p> Well done. You have now acces to the beautifull site.</p>
                     <p> Your username is {registeredUser}</p>
                     <p>
-                        <a href="#">Sign In</a>
+                        <Link to="/login">Sign In</Link>
                     </p>
                 </section>
             ) : (

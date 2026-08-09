@@ -56,7 +56,7 @@ const Login = (e) => {
             } else if (err.response?.status === 400) {
                 setErrMsg('Missing Username or Password');
             } else if (err.response?.status === 401) {
-                setErrMsg('Unauthorized');
+                setErrMsg(err.response?.data);
             } else {
                 setErrMsg('Login Failed')
             }
@@ -67,18 +67,12 @@ const Login = (e) => {
     return (
         <>
         { success ? (
-            <section>
-                <h1>
-                    Hello {registeredUser}, do what you want, you are logged in!
-                </h1>
-                <br/>
-                <p>
-                    <a href="#">go to Home</a>
-                </p>
-            </section>
+            <p>
+                <Link to='/WELCOMEHOME'>WELCOME HOME BUDDY !!!!!!!!!!</Link>
+            </p>
         ) : (
             <section>
-                <p ref={errRef} className={errMsg ? "errMsg" : "offscreen"} aria-live="assertive"> {errMsg} </p>
+                <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive"> {errMsg} </p>
                 <h1>
                     Log In
                 </h1>
