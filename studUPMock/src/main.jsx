@@ -6,7 +6,7 @@ import App from './App.jsx'
 import {AuthProvider} from './context/AuthProvider'
 import Register from './Register'
 import Login from './Login'
-import WELCOMEHOME from '/Welcomehome'
+import WELCOMEHOME from './Welcomehome'
 
 
 createRoot(document.getElementById('root')).render(
