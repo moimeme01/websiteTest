@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from "react";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from './api/axios';
-import { response } from "express";
 
 const USER_REGEX = /^[A-z]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z]).{1,24}$/;
@@ -15,6 +14,7 @@ const Register = () => {
     const [user, setUser] = useState('');
     const [validName, setValidName] = useState(false);
     const [userFocus, setUserFocus] = useState(false);
+    const [registeredUser, setRegisteredUser] = useState("");
 
     const [pwd, setPwd] = useState('');
     const [validPwd, setValidPwd] = useState(false);
@@ -65,6 +65,7 @@ const Register = () => {
             console.log(response)
             console.log(response?.data);
             setSuccess(true);
+            setRegisteredUser(user);
             //clear state and controlled inputs
             //need value attrib on inputs for this
             setUser('');
@@ -88,7 +89,7 @@ const Register = () => {
                 <section>
                     <h1>Success!</h1>
                     <p> Well done. You have now acces to the beautifull site.</p>
-                    <p> Your username is {response?.data.username}</p>
+                    <p> Your username is {registeredUser}</p>
                     <p>
                         <a href="#">Sign In</a>
                     </p>

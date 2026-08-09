@@ -25,7 +25,7 @@ def register_user(user: UserSchema, session: Session = Depends(get_session)):
     if dbuser: 
         #Database have already the user. 
         raise HTTPException(status_code=409, detail='User already exists')
-
+        
     dbuser = User(
         username=user.username,
         password=user.password
