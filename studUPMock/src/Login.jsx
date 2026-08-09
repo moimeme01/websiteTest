@@ -78,7 +78,7 @@ const Login = (e) => {
             </section>
         ) : (
             <section>
-                <p ref={errRef} className={ErrMsg ? "errMsg" : "offscreen"} aria-live="assertive"> {errMsg} </p>
+                <p ref={errRef} className={errMsg ? "errMsg" : "offscreen"} aria-live="assertive"> {errMsg} </p>
                 <h1>
                     Log In
                 </h1>

@@ -10,7 +10,7 @@ import Login from './Login'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/studUPMock">
       <AuthProvider>
         <Routes>
           <Route path="/" element={<App />}/> 
