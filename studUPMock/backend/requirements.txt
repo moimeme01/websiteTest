@@ -3,4 +3,3 @@ uvicorn[standard]
 pydantic-settings
 sqlalchemy
 alembic
-react-router-dom
