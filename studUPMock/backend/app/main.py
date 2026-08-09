@@ -14,7 +14,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",  # ← dev
-        # "https://tondomaine.com",  # ← prod (à ajouter plus tard)
+        "https://thibaultvanni.ovh/studUPMock",  # ← prod
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],

@@ -245,7 +245,7 @@ jobs:
             echo "--- Waiting for FastAPI ---"
             for i in $(seq 1 30); do
               if curl --silent --show-error --fail \
-                http://127.0.0.1:8000/users/ > /dev/null; then
+                http://127.0.0.1:8000/login/ > /dev/null; then
                 echo "FastAPI is responding"
                 exit 0
               fi
