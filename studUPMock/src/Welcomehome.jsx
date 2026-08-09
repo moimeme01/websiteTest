@@ -1,8 +1,7 @@
 import { useRef, useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, UNSAFE_createClientRoutesWithHMRRevalidationOptOut } from "react-router-dom";
 
-
-export default WELCOMEHOME = () => {
+const Welcomehome = () => {
     return(
         <>
             <p>
@@ -16,6 +15,8 @@ export default WELCOMEHOME = () => {
     );
 }
 
+
+export default Welcomehome
 
 
 
