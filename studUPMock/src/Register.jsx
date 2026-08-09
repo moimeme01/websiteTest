@@ -100,7 +100,6 @@ const Register = () => {
             errRef.current.focus();
         }
     }
-    
 
     return (
         <>
