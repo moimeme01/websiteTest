@@ -35,7 +35,8 @@ def register_user(user: UserSchema, session: Session = Depends(get_session)):
             )
         )
     )
-    if dbuser.email is not None:
+    print("arrived here")
+    if dbuser is not None:
         if dbuser.email == user.email: 
             #The email already belongs to someone in the database.. 
             raise HTTPException(status_code=409, detail={
@@ -43,7 +44,9 @@ def register_user(user: UserSchema, session: Session = Depends(get_session)):
                 "field": "email",
                 "message": "Cette adresse email est déjà connectée a un compte. Si tu ne te souviens plus du mot de passe, tu peux en demaner un nouveau."
             })
-    if dbuser.email is not None:
+
+        
+    if dbuser is not None:
         if dbuser.username == user.username: 
                 #The username already belongs to someone in the database.. 
                 raise HTTPException(status_code=409, detail={
