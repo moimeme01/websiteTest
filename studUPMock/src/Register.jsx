@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from './api/axios';
+import { response } from "express";
 
 const USER_REGEX = /^[A-z]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z]).{1,24}$/;
@@ -61,6 +62,7 @@ const Register = () => {
                     withCredentials: true
                 }
             );
+            console.log(response)
             console.log(response?.data);
             setSuccess(true);
             //clear state and controlled inputs
@@ -85,6 +87,8 @@ const Register = () => {
             {success ? (
                 <section>
                     <h1>Success!</h1>
+                    <p> Well done. You have now acces to the beautifull site.</p>
+                    <p> Your username is {response?.data.username}</p>
                     <p>
                         <a href="#">Sign In</a>
                     </p>
@@ -165,7 +169,7 @@ const Register = () => {
                             Must match the first password input field.
                         </p>
 
-                        <button disabled={!validName || !validPwd || !validMatch ? true : false}>Sign Up</button>
+                        <button disabled={!validName || !validPwd || !validMatch}>Sign Up</button>
                     </form>
                     <p>
                         Already registered?<br />
