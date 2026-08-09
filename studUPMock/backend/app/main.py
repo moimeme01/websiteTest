@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from http import HTTPStatus
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from fastapi.middleware.cors import CORSMiddleware
 
 from schemas import UserPublic, UserSchema
 from models import User
@@ -9,6 +10,16 @@ from database import get_session
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",  # ← dev
+        # "https://tondomaine.com",  # ← prod (à ajouter plus tard)
+    ],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["Content-Type", "Authorization"],
+)
 
 @app.post("/register", status_code=HTTPStatus.CREATED, response_model=UserPublic)
 def register_user(user: UserSchema, session: Session = Depends(get_session)):
