@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
 from http import HTTPStatus
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -24,24 +24,45 @@ app.add_middleware(
 @app.post("/register", status_code=HTTPStatus.CREATED, response_model=UserPublic)
 def register_user(user: UserSchema, session: Session = Depends(get_session)):
 
+    # Check if the user is already in the database or the email is already linked to an account
     dbuser = session.scalar(
         select(User).where(
-            User.username == user.username
+            or_(
+                User.username == user.username,
+                User.email == user.email,
+            )
         )
     )
 
-    if dbuser: 
-        #Database have already the user. 
-        raise HTTPException(status_code=409, detail='User already exists')
-        
+    if dbuser.email == User.email: 
+        #The email already belongs to someone in the database.. 
+        raise HTTPException(status_code=409, detail={
+            "code": "EMAIL_ALREADY_IN_USE",
+            "field": "email",
+            "message": "Cette adresse email est déjà connectée a un compte. Si tu ne te souviens plus du mot de passe, tu peux en demaner un nouveau."
+        })
+
+    if dbuser.username == User.username: 
+            #The username already belongs to someone in the database.. 
+            raise HTTPException(status_code=409, detail={
+                "code": "USERNAME_ALREADY_IN_USE",
+                "field": "username",
+                "message": "Ce nom d'utilisateur est déjà utilisé, choisis-en un autre."
+            })
+
+    #Otherwise we create it.
     dbuser = User(
         username=user.username,
-        password=user.password
+        password=user.password,
+        email=user.email,
+        role=user.role
     )
 
     session.add(dbuser)
     session.commit()
     session.refresh(dbuser)
+
+    
 
     return dbuser
 

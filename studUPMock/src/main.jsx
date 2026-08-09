@@ -6,7 +6,7 @@ import App from './App.jsx'
 import {AuthProvider} from './context/AuthProvider'
 import Register from './Register'
 import Login from './Login'
-import Welcomehome from './Welcomehome'
+import Home from './Home'
 
 
 createRoot(document.getElementById('root')).render(
@@ -17,7 +17,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/" element={<App />}/> 
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
-          <Route path='/WELCOMEHOME' element={<Welcomehome />} />
+          <Route path='/home' element={<Home />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

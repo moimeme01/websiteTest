@@ -56,7 +56,7 @@ const Login = (e) => {
             } else if (err.response?.status === 400) {
                 setErrMsg('Missing Username or Password');
             } else if (err.response?.status === 401) {
-                setErrMsg(err.response?.data);
+                setErrMsg("Username not found or password incorrect");
             } else {
                 setErrMsg('Login Failed')
             }
@@ -68,7 +68,7 @@ const Login = (e) => {
         <>
         { success ? (
             <p>
-                <Link to='/WELCOMEHOME'>WELCOME HOME BUDDY !!!!!!!!!!</Link>
+                <Link to='/home'>Go home</Link>
             </p>
         ) : (
             <section>
@@ -104,8 +104,9 @@ const Login = (e) => {
                 </form>
                 <p>
                     Don't have an account?<br/>
+                    Ask now to create your account.<br/>
                     <span className="line">
-                        <Link to="/register">Sign Up</Link>
+                        <Link to="/register">Ask for an account</Link>
                     </span>
                     
                 </p>
