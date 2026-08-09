@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 
+from settings import Settings
 from schemas import UserPublic, UserSchema
 from models import User
 from database import get_session
@@ -22,6 +23,10 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["Content-Type", "Authorization"],
 )
+
+
+settings = Settings()
+print("DATABASE_URL loaded:", bool(settings.DATABASE_URL))
 
 @app.post("/register", status_code=HTTPStatus.CREATED, response_model=UserPublic)
 def register_user(user: UserSchema, session: Session = Depends(get_session)):
