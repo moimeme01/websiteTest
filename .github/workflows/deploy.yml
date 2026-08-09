@@ -218,48 +218,48 @@ jobs:
             </dict>
             </plist>
             EOF
-                    echo "Plist file created"
-                  fi
+              echo "Plist file created"
+            fi
 
-                  echo "--- Fixing plist permissions ---"
-                  chmod 644 "$PLIST"
-                  chown thibault:staff "$PLIST"
-                  ls -la "$PLIST"
+            echo "--- Fixing plist permissions ---"
+            chmod 644 "$PLIST"
+            chown thibault:staff "$PLIST"
+            ls -la "$PLIST"
 
-                  echo "--- Plist file details ---"
-                  file "$PLIST"
-                  echo "--- Plist content ---"
-                  cat "$PLIST"
+            echo "--- Plist file details ---"
+            file "$PLIST"
+            echo "--- Plist content ---"
+            cat "$PLIST"
 
-                  echo "--- Stopping existing LaunchAgent ---"
-                  launchctl bootout "user/$CURRENT_UID/$LABEL" 2>/dev/null || true
-                  sleep 2
+            echo "--- Stopping existing LaunchAgent ---"
+            launchctl bootout "user/$CURRENT_UID/$LABEL" 2>/dev/null || true
+            sleep 2
 
-                  echo "--- Starting LaunchAgent ---"
-                  if ! launchctl bootstrap "user/$CURRENT_UID" "$PLIST"; then
-                    echo "Bootstrap failed, checking launchctl status..."
-                    launchctl print "gui/$CURRENT_UID/$LABEL" || true
-                    exit 1
-                  fi
+            echo "--- Starting LaunchAgent ---"
+            if ! launchctl bootstrap "user/$CURRENT_UID" "$PLIST"; then
+              echo "Bootstrap failed, checking launchctl status..."
+              launchctl print "gui/$CURRENT_UID/$LABEL" || true
+              exit 1
+            fi
 
-                  echo "--- Waiting for FastAPI ---"
-                  for i in $(seq 1 30); do
-                    if curl --silent --show-error --fail \
-                      http://127.0.0.1:8000/users/ > /dev/null; then
-                      echo "FastAPI is responding"
-                      exit 0
-                    fi
-                    sleep 1
-                  done
+            echo "--- Waiting for FastAPI ---"
+            for i in $(seq 1 30); do
+              if curl --silent --show-error --fail \
+                http://127.0.0.1:8000/users/ > /dev/null; then
+                echo "FastAPI is responding"
+                exit 0
+              fi
+              sleep 1
+            done
 
-                  echo "--- FastAPI failed to start ---"
-                  echo "--- launchctl status ---"
-                  launchctl print "gui/$CURRENT_UID/$LABEL" || true
+            echo "--- FastAPI failed to start ---"
+            echo "--- launchctl status ---"
+            launchctl print "gui/$CURRENT_UID/$LABEL" || true
 
-                  echo "--- backend error log ---"
-                  tail -n 100 "$BACKEND_DIR/api-error.log" || true
+            echo "--- backend error log ---"
+            tail -n 100 "$BACKEND_DIR/api-error.log" || true
 
-                  echo "--- backend output log ---"
-                  tail -n 100 "$BACKEND_DIR/api.log" || true
+            echo "--- backend output log ---"
+            tail -n 100 "$BACKEND_DIR/api.log" || true
 
-                  exit 1
+            exit 1

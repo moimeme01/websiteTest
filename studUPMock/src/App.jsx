@@ -1,11 +1,8 @@
-import Register from './Register';
+import { Navigate } from "react-router-dom";
 
 function App() {
-
   return (
-    <main className="App">
-      <Register />
-    </main>
+      <Navigate to="/login"  replace />
   );
 }
 

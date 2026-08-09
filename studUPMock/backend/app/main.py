@@ -9,9 +9,6 @@ from database import get_session
 
 app = FastAPI()
 
-@app.get("/users/")
-def user():
-    return {"status": "OK"}
 
 @app.post("/register", status_code=HTTPStatus.CREATED, response_model=UserPublic)
 def register_user(user: UserSchema, session: Session = Depends(get_session)):
@@ -36,3 +33,23 @@ def register_user(user: UserSchema, session: Session = Depends(get_session)):
     session.refresh(dbuser)
 
     return dbuser
+
+@app.post("/login", status_code=HTTPStatus.OK, response_model=UserPublic)
+def return_user(user: UserSchema, session: Session = Depends(get_session)):
+
+    dbuser = session.scalar(
+        select(User).where(User.username == user.username).where(User.password == user.password)
+    )
+
+    if dbuser: 
+        #Database have already the user. 
+        return dbuser
+
+    dbuser = session.scalar(
+            select(User).where(User.username == user.username)
+        )
+    if dbuser:
+        raise HTTPException(status_code=401, detail="Wrong password")
+
+    else: 
+        raise HTTPException(status_code=401, detail="It seems you don't have an account. Go to the Sign Up page.")
