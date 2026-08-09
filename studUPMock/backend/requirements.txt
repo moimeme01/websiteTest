@@ -3,4 +3,5 @@ uvicorn[standard]
 pydantic-settings
 sqlalchemy
 alembic
+dotenv
 pydantic[email]

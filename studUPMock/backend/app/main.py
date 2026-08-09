@@ -3,12 +3,14 @@ from http import HTTPStatus
 from sqlalchemy import select, or_
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
+import logging
 
 from schemas import UserPublic, UserSchema
 from models import User
 from database import get_session
 
 app = FastAPI()
+logger = logging.getLogger(__name__)
 
 app.add_middleware(
     CORSMiddleware,
@@ -23,7 +25,7 @@ app.add_middleware(
 
 @app.post("/register", status_code=HTTPStatus.CREATED, response_model=UserPublic)
 def register_user(user: UserSchema, session: Session = Depends(get_session)):
-
+    logger.info("Register Request")
     # Check if the user is already in the database or the email is already linked to an account
     dbuser = session.scalar(
         select(User).where(
@@ -62,7 +64,7 @@ def register_user(user: UserSchema, session: Session = Depends(get_session)):
     session.commit()
     session.refresh(dbuser)
 
-    
+
 
     return dbuser
 
