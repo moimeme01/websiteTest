@@ -35,22 +35,22 @@ def register_user(user: UserSchema, session: Session = Depends(get_session)):
             )
         )
     )
-
-    if dbuser.email == User.email: 
-        #The email already belongs to someone in the database.. 
-        raise HTTPException(status_code=409, detail={
-            "code": "EMAIL_ALREADY_IN_USE",
-            "field": "email",
-            "message": "Cette adresse email est déjà connectée a un compte. Si tu ne te souviens plus du mot de passe, tu peux en demaner un nouveau."
-        })
-
-    if dbuser.username == User.username: 
-            #The username already belongs to someone in the database.. 
+    if dbuser.email is not None:
+        if dbuser.email == user.email: 
+            #The email already belongs to someone in the database.. 
             raise HTTPException(status_code=409, detail={
-                "code": "USERNAME_ALREADY_IN_USE",
-                "field": "username",
-                "message": "Ce nom d'utilisateur est déjà utilisé, choisis-en un autre."
+                "code": "EMAIL_ALREADY_IN_USE",
+                "field": "email",
+                "message": "Cette adresse email est déjà connectée a un compte. Si tu ne te souviens plus du mot de passe, tu peux en demaner un nouveau."
             })
+    if dbuser.email is not None:
+        if dbuser.username == user.username: 
+                #The username already belongs to someone in the database.. 
+                raise HTTPException(status_code=409, detail={
+                    "code": "USERNAME_ALREADY_IN_USE",
+                    "field": "username",
+                    "message": "Ce nom d'utilisateur est déjà utilisé, choisis-en un autre."
+                })
 
     #Otherwise we create it.
     dbuser = User(
