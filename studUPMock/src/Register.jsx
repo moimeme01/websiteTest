@@ -213,7 +213,7 @@ const Register = () => {
                                 type="radio"
                                 name="role"
                                 onChange={(e) => setRole(e.target.value)}
-                                value="Enseignant•e"
+                                value="Enseignant.e"
                             />
                             Enseignant•e
                         </label>
@@ -222,7 +222,7 @@ const Register = () => {
                                 type="radio"
                                 name="role"
                                 onChange={(e) => setRole(e.target.value)}
-                                value="Etudiant•e"
+                                value="Etudiant.e"
                             />
                             Etudiant•e
                         </label>
