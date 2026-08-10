@@ -4,8 +4,6 @@ from datetime import datetime
 class UserSchema(BaseModel):
     username: str
     password: str
-    email: EmailStr
-    role: str
 
 class UserPublic(BaseModel):
     id: int
