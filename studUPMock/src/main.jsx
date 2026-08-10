@@ -2,14 +2,11 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route} from "react-router-dom"
 import './index.css'
-import App from './App.jsx'
 import { AuthProvider } from './context/AuthProvider'
-import Register from './Register'
-import Login from './Login'
-import Home from './Home'
-import Connected from './UserSession'
 import ProtectedRoute from "./context/ProtectedRoute"
 import AdminRoute from "./context/AdminRoute"
+
+import {AdminPage, App, Home, Login, Register, Connected } from "./components"
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

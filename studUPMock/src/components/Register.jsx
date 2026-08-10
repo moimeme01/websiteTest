@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from './api/axios';
+import axios from '../api/axios';
 
 const USER_REGEX = /^[A-Za-z][A-Za-z0-9_-]*.{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z]).{1,24}$/;
