@@ -139,9 +139,6 @@ jobs:
             set -eu
 
             BACKEND_DIR="/Users/thibault/apps/studUPMock-backend"
-            PLIST="/Users/thibault/Library/LaunchDaemons/com.thibault.studupmock-api.plist"
-            LABEL="com.thibault.studupmock-api"
-            CURRENT_UID="$(id -u)"
 
             cd "$BACKEND_DIR"
 
@@ -168,98 +165,3 @@ jobs:
             echo "--- Testing FastAPI import ---"
             .venv/bin/python -c \
               "from app.main import app; print('FastAPI import OK')"
-
-            echo "--- Checking LaunchDaemons directory ---"
-            LAUNCH_DIR="/Users/thibault/Library/LaunchDaemons"
-            sudo mkdir -p "$LAUNCH_DIR"
-            sudo chmod 700 "$LAUNCH_DIR"
-            ls -la "$LAUNCH_DIR" || echo "Directory empty or inaccessible"
-
-            echo "--- Checking plist file ---"
-            if [ ! -f "$PLIST" ]; then
-              echo "ERROR: Plist file not found at $PLIST"
-              echo "Creating plist file..."
-              cat > "$PLIST" << 'EOF'
-            <?xml version="1.0" encoding="UTF-8"?>
-            <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-            <plist version="1.0">
-            <dict>
-                <key>Label</key>
-                <string>com.thibault.studupmock-api</string>
-                <key>ProgramArguments</key>
-                <array>
-                    <string>/Users/thibault/apps/studUPMock-backend/.venv/bin/python</string>
-                    <string>-m</string>
-                    <string>uvicorn</string>
-                    <string>app.main:app</string>
-                    <string>--host</string>
-                    <string>127.0.0.1</string>
-                    <string>--port</string>
-                    <string>8000</string>
-                </array>
-                <key>WorkingDirectory</key>
-                <string>/Users/thibault/apps/studUPMock-backend</string>
-                <key>StandardOutPath</key>
-                <string>/Users/thibault/apps/studUPMock-backend/api.log</string>
-                <key>StandardErrorPath</key>
-                <string>/Users/thibault/apps/studUPMock-backend/api-error.log</string>
-                <key>EnvironmentVariables</key>
-                <dict>
-                    <key>PATH</key>
-                    <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
-                </dict>
-                <key>RunAtLoad</key>
-                <true/>
-                <key>KeepAlive</key>
-                <dict>
-                    <key>SuccessfulExit</key>
-                    <false/>
-                </dict>
-            </dict>
-            </plist>
-            EOF
-              echo "Plist file created"
-            fi
-
-            echo "--- Fixing plist permissions ---"
-            sudo chmod 644 "$PLIST"
-            sudo chown root:wheel "$PLIST"
-            ls -la "$PLIST"
-
-            echo "--- Plist file details ---"
-            file "$PLIST"
-            echo "--- Plist content ---"
-            cat "$PLIST"
-
-            echo "--- Stopping existing LaunchDaemons ---"
-            sudo launchctl bootout system "$PLIST" 2>/dev/null || true
-            sleep 2
-
-            echo "--- Starting LaunchDaemon ---"
-            if ! sudo launchctl bootstrap system "$PLIST"; then
-              echo "Bootstrap failed, checking launchctl status..."
-              sudo launchctl print system | grep "$LABEL" || true
-              exit 1
-            fi
-
-            echo "--- Waiting for FastAPI ---"
-            for i in $(seq 1 30); do
-              if curl --silent --show-error --fail \
-                http://127.0.0.1:8000/docs > /dev/null; then
-                echo "FastAPI is responding"
-                exit 0
-              fi
-              sleep 1
-            done
-
-            echo "--- FastAPI failed to start ---"
-            echo "--- launchctl status ---"
-            launchctl print "gui/$CURRENT_UID/$LABEL" || true
-
-            echo "--- backend error log ---"
-            tail -n 100 "$BACKEND_DIR/api-error.log" || true
-
-            echo "--- backend output log ---"
-            tail -n 100 "$BACKEND_DIR/api.log" || true
-
-            exit 1
