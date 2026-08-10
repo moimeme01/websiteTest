@@ -2,7 +2,6 @@ import { useRef, useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import axios from './api/axios';
 import AuthContext, { useAuth } from "./context/AuthProvider";
-import setLoggedIn from './main'
 const LOGIN_URL = '/login';
 
 const Login = (e) => {
@@ -69,7 +68,7 @@ const Login = (e) => {
             setPwd("");
             setSuccess(true);
             navigate(route);
-            
+
         } catch (err) {
             if (!err?.response) {
                 setErrMsg("No Server Response")
