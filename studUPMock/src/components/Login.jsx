@@ -62,7 +62,7 @@ const Login = (e) => {
                     route = "/student"
                 }
             } else {
-                route = "/login"
+                route = "/unauthorizedRoute"
             }
             setLoggedUser(user)
             setUser("");
