@@ -139,7 +139,7 @@ jobs:
             set -eu
 
             BACKEND_DIR="/Users/thibault/apps/studUPMock-backend"
-            PLIST="/Users/thibault/Library/LaunchAgents/com.thibault.studupmock-api.plist"
+            PLIST="/Users/thibault/Library/LaunchDaemons/com.thibault.studupmock-api.plist"
             LABEL="com.thibault.studupmock-api"
             CURRENT_UID="$(id -u)"
 
@@ -169,10 +169,10 @@ jobs:
             .venv/bin/python -c \
               "from app.main import app; print('FastAPI import OK')"
 
-            echo "--- Checking LaunchAgents directory ---"
-            LAUNCH_DIR="/Users/thibault/Library/LaunchAgents"
-            mkdir -p "$LAUNCH_DIR"
-            chmod 700 "$LAUNCH_DIR"
+            echo "--- Checking LaunchDaemons directory ---"
+            LAUNCH_DIR="/Users/thibault/Library/LaunchDaemons"
+            sudo mkdir -p "$LAUNCH_DIR"
+            sudo chmod 700 "$LAUNCH_DIR"
             ls -la "$LAUNCH_DIR" || echo "Directory empty or inaccessible"
 
             echo "--- Checking plist file ---"
@@ -222,8 +222,8 @@ jobs:
             fi
 
             echo "--- Fixing plist permissions ---"
-            chmod 644 "$PLIST"
-            chown thibault:staff "$PLIST"
+            sudo chmod 644 "$PLIST"
+            sudo chown root:wheel "$PLIST"
             ls -la "$PLIST"
 
             echo "--- Plist file details ---"
@@ -231,21 +231,21 @@ jobs:
             echo "--- Plist content ---"
             cat "$PLIST"
 
-            echo "--- Stopping existing LaunchAgent ---"
-            launchctl bootout "user/$CURRENT_UID/$LABEL" 2>/dev/null || true
+            echo "--- Stopping existing LaunchDaemons ---"
+            sudo launchctl bootout system "$PLIST" 2>/dev/null || true
             sleep 2
 
-            echo "--- Starting LaunchAgent ---"
-            if ! launchctl bootstrap "user/$CURRENT_UID" "$PLIST"; then
+            echo "--- Starting LaunchDaemon ---"
+            if ! sudo launchctl bootstrap system "$PLIST"; then
               echo "Bootstrap failed, checking launchctl status..."
-              launchctl print "gui/$CURRENT_UID/$LABEL" || true
+              sudo launchctl print system | grep "$LABEL" || true
               exit 1
             fi
 
             echo "--- Waiting for FastAPI ---"
             for i in $(seq 1 30); do
               if curl --silent --show-error --fail \
-                http://127.0.0.1:8000/login/ > /dev/null; then
+                http://127.0.0.1:8000/docs > /dev/null; then
                 echo "FastAPI is responding"
                 exit 0
               fi
