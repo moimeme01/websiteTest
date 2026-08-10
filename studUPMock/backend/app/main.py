@@ -4,6 +4,8 @@ from sqlalchemy import select, or_
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 import logging
+import smtplib
+from dotenv import dotenv_values
 
 from settings import Settings
 from schemas import UserPublic, UserSchema
@@ -12,6 +14,7 @@ from database import get_session
 
 app = FastAPI()
 logger = logging.getLogger(__name__)
+env = dotenv_values("./.env")
 
 app.add_middleware(
     CORSMiddleware,
@@ -50,8 +53,6 @@ def register_user(user: UserSchema, session: Session = Depends(get_session)):
                 "message": "Cette adresse email est déjà connectée a un compte. Si tu ne te souviens plus du mot de passe, tu peux en demaner un nouveau."
             })
 
-        
-    if dbuser is not None:
         if dbuser.username == user.username: 
                 #The username already belongs to someone in the database.. 
                 raise HTTPException(status_code=409, detail={
@@ -72,7 +73,19 @@ def register_user(user: UserSchema, session: Session = Depends(get_session)):
     session.commit()
     session.refresh(dbuser)
 
+    message = f"""\
+    Subject: New account request on studUP.
 
+    A new user want to create an account on StudUP. Here's a recap:
+    username = {user.username}
+    email = {user.email},
+    role = {user.role}.
+
+    Check on your admin page to authorize it.
+    """
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        server.login(env["EMAIL_SENDER"], env["EMAIL_KEY"])
+        server.sendmail(env["EMAIL_SENDER"], env["EMAIL_RECEIVER"], message)
 
     return dbuser
 
