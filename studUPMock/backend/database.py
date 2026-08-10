@@ -8,7 +8,6 @@ setting = Settings()
 engine = create_engine(setting.DATABASE_URL)
 
 def get_session(): # pragma: no cover
-
     with Session(engine) as session:
         yield session
     """
