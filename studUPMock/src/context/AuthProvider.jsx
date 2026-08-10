@@ -1,15 +1,28 @@
-import { createContext, useState } from "react";
+import { Navigate } from "react-router-dom";
 
-const AuthContext = createContext({});
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({children }) => {
-    const [auth, setAuth] = useState({});
-
+    const [auth, setAuth] = useState(null);
+    const login = (user) => {
+        setAuth(user);
+    };
+    const logout = () => {
+        setAuth(null)
+    };
     return (
-        <AuthContext.Provider value={{ auth, setAuth }}>
+        <AuthContext.Provider value={{ auth, login, logout }}>
             {children}
         </AuthContext.Provider>
-    )
-}
+    );
+};
 
-export default AuthContext
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+
+    if (!context){ throw new Error ("useAuth must be used inside an auth provider");}
+
+    return context;
+};
+
+export default AuthContext;

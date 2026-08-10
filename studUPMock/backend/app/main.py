@@ -8,7 +8,7 @@ import smtplib
 from dotenv import dotenv_values
 
 from settings import Settings
-from schemas import UserPublic, UserSchema
+from schemas import UserPublic, UserSchema, LogInResponse
 from models import User
 from database import get_session
 
@@ -89,16 +89,21 @@ def register_user(user: UserSchema, session: Session = Depends(get_session)):
 
     return dbuser
 
-@app.post("/login", status_code=HTTPStatus.OK, response_model=UserPublic)
+@app.post("/login", status_code=HTTPStatus.OK, response_model=LogInResponse)
 def return_user(user: UserSchema, session: Session = Depends(get_session)):
 
     dbuser = session.scalar(
         select(User).where(User.username == user.username).where(User.password == user.password)
     )
 
+    access_token = "nothingUsefull"
+
     if dbuser: 
         #Database have already the user. 
-        return dbuser
+        return {
+             "user": dbuser,
+             "accessToken": access_token,
+            }
 
     dbuser = session.scalar(
             select(User).where(User.username == user.username)

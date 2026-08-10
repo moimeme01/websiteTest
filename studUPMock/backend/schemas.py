@@ -12,3 +12,8 @@ class UserPublic(BaseModel):
     username: str
     created_at: datetime
     role: str
+    authorized: bool
+
+class LogInResponse(BaseModel):
+    user: UserPublic
+    accessToken: str

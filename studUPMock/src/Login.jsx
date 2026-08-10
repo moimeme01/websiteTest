@@ -1,12 +1,14 @@
 import { useRef, useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import axios from './api/axios';
-import AuthContext from "./context/AuthProvider";
-
+import AuthContext, { useAuth } from "./context/AuthProvider";
+import setLoggedIn from './main'
 const LOGIN_URL = '/login';
 
 const Login = (e) => {
     const {setAuth} = useContext(AuthContext);
+    const navigate = useNavigate();
+    const { login } = useAuth();
     const userRef = useRef("");
     const errRef = useRef("");
 
@@ -15,7 +17,7 @@ const Login = (e) => {
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false);
 
-    const [registeredUser, setRegisteredUser] = useState('');
+    const [loggedUser, setLoggedUser] = useState('');
 
     useEffect( () => {
         userRef.current.focus();
@@ -42,14 +44,32 @@ const Login = (e) => {
                     withCredentials: true
                 }
             );
-            console.log(JSON.stringify(response?.data));
-            const accessToken = response?.data?.accessToken;
-            setAuth( {user, pwd, accessToken });
-            setRegisteredUser(user)
+            const authUser = response.data.user;
+            const authAccessToken = response.data.accessToken;
+            login({
+                username: authUser.username,
+                role: authUser.role, 
+                authorized: authUser.authorized,
+                accessToken,
+            });
+            let route;
+            if (authorized){
+                if (authUser.role === "admin"){
+                    route = "/admin";
+                } else if (authUser.role === "Enseignant.e"){
+                    route = "/professor"
+                } else {
+                    route = "/student"
+                }
+            } else {
+                route = "/login"
+            }
+            setLoggedUser(user)
             setUser("");
             setPwd("");
             setSuccess(true);
-
+            navigate(route);
+            
         } catch (err) {
             if (!err?.response) {
                 setErrMsg("No Server Response")
@@ -66,56 +86,49 @@ const Login = (e) => {
 
     return (
         <>
-        { success ? (
+        <section>
+            <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive"> {errMsg} </p>
+            <h1>
+                Log In
+            </h1>
+            <form onSubmit={handleLogIn}>
+                <label htmlFor="username">
+                    Username
+                </label>
+                <input
+                    type="text"
+                    id="username"
+                    ref={userRef}
+                    autoComplete="off"
+                    onChange={e => setUser(e.target.value)}
+                    value={user}
+                    required
+                />
+                <label htmlFor="username">
+                    Password
+                </label>
+                <input
+                    type="password"
+                    id="password"
+                    autoComplete="off"
+                    onChange={e => setPwd(e.target.value)}
+                    value={pwd}
+                    required
+                />
+                <button disabled={!user || !pwd}> Sign In </button>
+            </form>
             <p>
-                <Link to='/home'>Go home</Link>
+                Don't have an account?<br/>
+                Ask now to create your account.<br/>
+                <span className="line">
+                    <Link to="/register">Ask for an account</Link>
+                </span>
+                
             </p>
-        ) : (
-            <section>
-                <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive"> {errMsg} </p>
-                <h1>
-                    Log In
-                </h1>
-                <form onSubmit={handleLogIn}>
-                    <label htmlFor="username">
-                        Username
-                    </label>
-                    <input
-                        type="text"
-                        id="username"
-                        ref={userRef}
-                        autoComplete="off"
-                        onChange={e => setUser(e.target.value)}
-                        value={user}
-                        required
-                    />
-                    <label htmlFor="username">
-                        Password
-                    </label>
-                    <input
-                        type="password"
-                        id="password"
-                        autoComplete="off"
-                        onChange={e => setPwd(e.target.value)}
-                        value={pwd}
-                        required
-                    />
-                    <button disabled={!user || !pwd}> Sign In </button>
-                </form>
-                <p>
-                    Don't have an account?<br/>
-                    Ask now to create your account.<br/>
-                    <span className="line">
-                        <Link to="/register">Ask for an account</Link>
-                    </span>
-                    
-                </p>
 
-            </section>
-        
-        )}
+        </section>
         </>
     )
-}
+};
 
-export default Login
+export default Login;
