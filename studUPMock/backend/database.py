@@ -3,10 +3,14 @@ from sqlalchemy.orm import Session
 
 from settings import Settings
 
-engine = create_engine(Settings().DATABASE_URL)
+setting = Settings()
+
+engine = create_engine(setting.DATABASE_URL)
 
 def get_session(): # pragma: no cover
 
+    with Session(engine) as session:
+        yield session
     """
     When the tests are run, this line will never be covered. 
     Because the tests will replace this block with a fixture at runtime here. 
@@ -14,5 +18,3 @@ def get_session(): # pragma: no cover
     in the coverage is to add the comment # pragma: no cover. This will make him ignore this block in the count.
     """
     
-    with Session(engine) as session:
-        yield session
