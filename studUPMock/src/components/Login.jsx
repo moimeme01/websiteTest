@@ -44,6 +44,7 @@ const Login = (e) => {
                     withCredentials: true
                 }
             );
+            console.log("user found in the database.")
             const authUser = response.data.user;
             const authAccessToken = response.data.accessToken;
             login({
@@ -52,6 +53,7 @@ const Login = (e) => {
                 authorized: authUser.authorized,
                 accessToken,
             });
+            console.log(authUser)
             let route;
             if (authorized){
                 if (authUser.role === "admin"){

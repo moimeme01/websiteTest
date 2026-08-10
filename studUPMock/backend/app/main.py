@@ -95,7 +95,7 @@ def return_user(user: UserSchema, session: Session = Depends(get_session)):
     dbuser = session.scalar(
         select(User).where(User.username == user.username).where(User.password == user.password)
     )
-
+    print("user found and connected.")
     access_token = "nothingUsefull"
 
     if dbuser: 
