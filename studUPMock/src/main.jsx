@@ -6,7 +6,7 @@ import { AuthProvider } from './context/AuthProvider'
 import ProtectedRoute from "./context/ProtectedRoute"
 import AdminRoute from "./context/AdminRoute"
 
-import {AdminPage, App, Home, Login, Register, Connected, unauthorizedRoute} from "./components"
+import {AdminPage, App, Home, Login, Register, Connected, UnauthorizedRoute} from "./components"
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -17,7 +17,7 @@ createRoot(document.getElementById('root')).render(
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
           <Route path='/home' element={<Home />} />
-          <Route path='/unauthorizedRoute' element={<unauthorizedRoute/>}/>
+          <Route path='/unauthorizedRoute' element={<UnauthorizedRoute/>}/>
 
           <Route element= {<ProtectedRoute/>}>
             <Route path='/student' element={<Connected/>}/>
