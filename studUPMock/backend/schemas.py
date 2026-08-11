@@ -15,3 +15,9 @@ class UserPublic(BaseModel):
 class LogInResponse(BaseModel):
     user: UserPublic
     accessToken: str
+
+class UserRegister(BaseModel):
+    username: str
+    username: str
+    email: EmailStr
+    role: str

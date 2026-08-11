@@ -68,6 +68,7 @@ const Register = () => {
             return;
         }
         try {
+            console.log("trying to register")
             const response = await axios.post(REGISTER_URL,
                 JSON.stringify({ 
                     username: user, 
@@ -80,6 +81,8 @@ const Register = () => {
                     withCredentials: true
                 }
             );
+
+            console.log("finished the register.")
             setSuccess(true);
             setRegisteredUser(user);
             //clear state and controlled inputs
@@ -90,6 +93,7 @@ const Register = () => {
             setEmail('');
             setRole('');
         } catch (err) {
+            console.log(err)
             if (!err?.response) {
                 setErrMsg('No Server Response');
             } else if (err.response?.status === 409) {

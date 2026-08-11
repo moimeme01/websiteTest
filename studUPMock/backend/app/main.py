@@ -8,7 +8,7 @@ import smtplib
 from dotenv import dotenv_values
 
 from settings import Settings
-from schemas import UserPublic, UserSchema, LogInResponse
+from schemas import UserPublic, UserSchema, LogInResponse, UserRegister
 from models import User
 from database import get_session
 
@@ -32,7 +32,7 @@ settings = Settings()
 print("DATABASE_URL loaded:", bool(settings.DATABASE_URL))
 
 @app.post("/register", status_code=HTTPStatus.CREATED, response_model=UserPublic)
-def register_user(user: UserSchema, session: Session = Depends(get_session)):
+def register_user(user: UserRegister, session: Session = Depends(get_session)):
     logger.info("Register Request")
     # Check if the user is already in the database or the email is already linked to an account
     dbuser = session.scalar(
