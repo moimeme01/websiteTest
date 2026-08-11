@@ -70,10 +70,12 @@ const Login = (e) => {
             setUser("");
             setPwd("");
             setSuccess(true);
+            console.log("All reset")
             navigate(route);
-
+            console.log("end of try.")
         } catch (err) {
             if (!err?.response) {
+                console.log(err?.response)
                 setErrMsg("No Server Response")
             } else if (err.response?.status === 400) {
                 setErrMsg('Missing Username or Password');
