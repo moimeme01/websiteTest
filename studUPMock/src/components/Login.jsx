@@ -56,8 +56,9 @@ const Login = (e) => {
             });
             console.log("arrived after login.")
             console.log(authUser)
+            console.log(authUser.authorised)
             let route;
-            if (authorized){
+            if (authUser.authorized){
                 if (authUser.role === "admin"){
                     route = "/admin";
                 } else if (authUser.role === "Enseignant.e"){
