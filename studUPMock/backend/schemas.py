@@ -18,6 +18,6 @@ class LogInResponse(BaseModel):
 
 class UserRegister(BaseModel):
     username: str
-    username: str
+    password: str
     email: EmailStr
     role: str
