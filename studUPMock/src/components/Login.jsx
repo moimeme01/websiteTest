@@ -47,6 +47,7 @@ const Login = (e) => {
             console.log("user found in the database.")
             const authUser = response.data.user;
             const authAccessToken = response.data.accessToken;
+            console.log(authUser)
             login({
                 username: authUser.username,
                 role: authUser.role, 
@@ -75,6 +76,8 @@ const Login = (e) => {
             navigate(route);
             console.log("end of try.")
         } catch (err) {
+            console.log("There is an error.")
+            console.log(err)
             if (!err?.response) {
                 console.log(err?.response)
                 setErrMsg("No Server Response")
