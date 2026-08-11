@@ -53,6 +53,7 @@ const Login = (e) => {
                 authorized: authUser.authorized,
                 accessToken: authAccessToken,
             });
+            console.log("arrived after login.")
             console.log(authUser)
             let route;
             if (authorized){
