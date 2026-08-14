@@ -1,11 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from settings import Settings
+from core.config import settings
 
-setting = Settings()
 
-engine = create_engine(setting.DATABASE_URL)
+engine = create_engine(settings.DATABASE_URL)
 
 def get_session(): # pragma: no cover
     with Session(engine) as session:
