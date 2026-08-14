@@ -145,7 +145,7 @@ jobs:
             echo "--- Checking backend files ---"
             test -f ".env"
             test -f "requirements.txt"
-            test -f "settings.py"
+            test -f "./core/config.py"
             test -f "alembic.ini"
 
             echo "--- Creating virtual environment ---"
@@ -157,11 +157,11 @@ jobs:
 
             echo "--- Testing settings ---"
             .venv/bin/python -c \
-              "from settings import Settings; s=Settings(); assert s.DATABASE_URL; print('DATABASE_URL loaded')"
+              "from core.config import Settings; s=Settings(); assert s.DATABASE_URL; print('DATABASE_URL loaded')"
 
             echo "--- Running database migrations ---"
             .venv/bin/alembic upgrade head
 
             echo "--- Testing FastAPI import ---"
             .venv/bin/python -c \
-              "from app.main import app; print('FastAPI import OK')"
+              "from main import app; print('FastAPI import OK')"
