@@ -5,8 +5,8 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from studUPMock.backend.models.user import table_registry      
-from studUPMock.backend.core.config import Settings  
+from models.user import table_registry      
+from core.config import Settings  
 
 
 # this is the Alembic Config object, which provides
