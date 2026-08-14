@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route} from "react-router-dom"
 import './index.css'
-import { AuthProvider } from './context/AuthProvider'
+import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from "./context/ProtectedRoute"
 import AdminRoute from "./context/AdminRoute"
 

@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from '../api/axios';
+import { useAuth } from "../context/AuthContext";
 
 const FIRSTNAME_REGEX = /^[A-Z][a-z]{2,19}$/;
 const LASTNAME_REGEX = /^[A-Z][a-z]{2,19}$/;
@@ -14,6 +14,8 @@ const REGISTER_URL = '/register';
 const Register = () => {
     const userRef = useRef();
     const errRef = useRef();
+
+    const { register } = useAuth(); 
 
     const [firstName, setFirstName] = useState('');
     const [validFirstName, setValidFirstName] = useState(false);
@@ -91,17 +93,18 @@ const Register = () => {
         }
         try {
             console.log("trying to register")
-            const response = await axios.post(REGISTER_URL,
+            const response = await register(
                 { 
+                    firstName: firstName,
+                    lastName: lastName,
                     username: userName, 
                     password: pwd,
                     email: email,
-                    role: role
+                    role: role,
+                    classroom: classroom,
+                    school: school,
+                    professor: teacher
                 },
-                {
-                    headers: { 'Content-Type': 'application/json' },
-                    withCredentials: true
-                }
             );
 
             console.log("finished the register.")
@@ -109,19 +112,26 @@ const Register = () => {
             setRegisteredUser(userName);
             //clear state and controlled inputs
             //need value attrib on inputs for this
-            setUser('');
+            setUserName('');
+            setFirstName('');
+            setLastName('');
             setPwd('');
             setMatchPwd('');
             setEmail('');
             setRole('');
+            setClassroom('');
+            setSchool('');
+            setTeacher('');
+
         } catch (err) {
             console.log(err)
             if (!err?.response) {
                 setErrMsg('No Server Response');
             } else if (err.response?.status === 409) {
-                setErrMsg('Username already taken.');
+                const detail = err.response?.data?.detail;
+                setErrMsg(detail?.message || 'Username already taken.');
             } else {
-                setErrMsg('Registration Failed')
+                setErrMsg(err.response?.data?.detail?.message || 'Registration Failed')
             }
             errRef.current.focus();
         }
@@ -149,7 +159,7 @@ const Register = () => {
                     </p>
                     <form onSubmit={handleSubmit} className="register-form">
                         <h1> Enregistrement </h1>
-                        <fieldset className="form-section form-section-full">
+                        <fieldset className="form-section">
                             <legend> Informations personnelles </legend>
 
                             <div className="form-field">
@@ -162,6 +172,7 @@ const Register = () => {
                                     type="text"
                                     id="lastname"
                                     name="lastname"
+                                    ref={userRef}
                                     autoComplete="family-name"
                                     onChange={(e) => setLastName(e.target.value)}
                                     value={lastName}
@@ -217,8 +228,6 @@ const Register = () => {
                                     id="username"
                                     name="username"
                                     autoComplete="username"
-                                    ref={userRef}
-                                    autoComplete="off"
                                     onChange={(e) => setUserName(e.target.value)}
                                     value={userName}
                                     required
@@ -248,6 +257,7 @@ const Register = () => {
                                     autoComplete="email"
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
+                                    value={email}
                                     aria-invalid={validEmail ? "false" : "true"}
                                     aria-describedby="emailnote"
                                     onFocus={() => setEmailFocus(true)}
@@ -260,7 +270,7 @@ const Register = () => {
 
                         </fieldset>
                         
-                        <fieldset className="form-section form-section-full">
+                        <fieldset className="form-section">
                             <legend> Sécurité </legend>
 
                             <div className="form-field">
@@ -317,7 +327,7 @@ const Register = () => {
 
                         </fieldset>
                         
-                        <fieldset className="form-section form-section-full">
+                        <fieldset className="form-section">
                             <legend> Rôle </legend>
                             <div className="radio-group">
                                 <label htmlFor="professor-role">
@@ -346,7 +356,7 @@ const Register = () => {
                             </div>
                         </fieldset>
 
-                        <fieldset className="form-section form-section-full">
+                        <fieldset className="form-section">
                             <legend> Informations complémentaires </legend>
                             <div className="form-field">
                                 <label htmlFor="class-select">
