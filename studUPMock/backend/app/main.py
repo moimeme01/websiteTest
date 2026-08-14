@@ -3,37 +3,34 @@ from http import HTTPStatus
 from sqlalchemy import select, or_
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
-import logging
 import smtplib
 from dotenv import dotenv_values
 
 from settings import Settings
-from schemas import UserPublic, UserSchema, LogInResponse, UserRegister
+from schemas import UserPublic, UserSchema, LogInResponse, UserRegister, AdminResponse
 from models import User
 from database import get_session
 
 app = FastAPI()
-logger = logging.getLogger(__name__)
 env = dotenv_values("./.env")
 
+allowed_origins = env.get("ALLOWED_ORIGINS", "").split(",")
+print(allowed_origins)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",  # ← dev
-        "https://thibaultvanni.ovh/studUPMock",  # ← prod
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
 )
 
 
 settings = Settings()
 print("DATABASE_URL loaded:", bool(settings.DATABASE_URL))
+print(settings.DATABASE_URL)
 
 @app.post("/register", status_code=HTTPStatus.CREATED, response_model=UserPublic)
 def register_user(user: UserRegister, session: Session = Depends(get_session)):
-    logger.info("Register Request")
     # Check if the user is already in the database or the email is already linked to an account
     dbuser = session.scalar(
         select(User).where(
@@ -113,3 +110,14 @@ def return_user(user: UserSchema, session: Session = Depends(get_session)):
 
     else: 
         raise HTTPException(status_code=401, detail="It seems you don't have an account. Go to the Sign Up page.")
+
+@app.get('/requested', status_code=HTTPStatus.OK, response_model=AdminResponse)
+def return_unauth_users(session: Session = Depends(get_session)):
+
+    unauth_users = session.scalars(
+        select(User).where(User.authorized == False)
+    ).all()
+    print("Unauth users are here below:")
+    print(unauth_users)
+
+    return {"users": unauth_users}

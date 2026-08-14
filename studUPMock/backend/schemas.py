@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr
+from typing import List
 from datetime import datetime
 
 class UserSchema(BaseModel):
@@ -21,3 +22,6 @@ class UserRegister(BaseModel):
     password: str
     email: EmailStr
     role: str
+
+class AdminResponse(BaseModel):
+    users: List[UserPublic]
