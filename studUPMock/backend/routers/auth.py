@@ -103,29 +103,44 @@ def return_user(user: UserSchema, response: Response, session: Session = Depends
         key="refresh_token",
         value=refresh_token,
         httponly=True,
-        secure=True,
+        secure=False, ### A MODIFIER LORS DU DEPLOIEMENT
         samesite="strict",
         max_age=7*24*60*60, #7 days
-        path="/auth/refresh",
+        path="/",
     )
 
     print(f"User {dbuser.username} logged in successfully.")
-    return {"access_token": access_token, "refresh_token": refresh_token}
+    return {"access_token": access_token, "role": dbuser.role, "authorized": dbuser.authorized}
 
 
 @router.post("/refresh", response_model=Token)
 def refresh_access_token(request: Request, response: Response, session: Session = Depends(get_session)):
     refresh_token = request.cookies.get("refresh_token")
+    print("refresh token is ", refresh_token)
+
     if not refresh_token:
         raise HTTPException(status_code=401, detail="No refresh token provided")
 
-    payload = decode_token(refresh_token)
+    try:
+        payload = decode_token(refresh_token)
+        
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
+
     if not payload or payload.get("type") != "refresh":
         raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
 
     # Verify user is still in DB or authorized
+    user_id = payload["user_id"]
 
-    dbuser = session.scalar(select(User).where(User.id == payload["user_id"]))
+    if user_id is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid refresh token payload",
+        )
+
+    
+    dbuser = session.scalar(select(User).where(User.id == user_id))
     if not dbuser:
         raise HTTPException(status_code=401, detail="User not found")
 
@@ -147,20 +162,20 @@ def refresh_access_token(request: Request, response: Response, session: Session 
         key="refresh_token",
         value=new_refresh,
         httponly=True,
-        secure=True,
+        secure=False,### A MODIFIER LORS DU DEPLOIEMENT
         samesite="strict",
         max_age=7*24*60*60, #7 days
         path="/auth/refresh",
     )
 
-    return {"access_token": new_access, "refresh_token": new_refresh}
+    return {"access_token": new_access, "role": dbuser.role, "authorized": dbuser.authorized}
 
 @router.post("/logout")
 def logout_user(response: Response):
     response.delete_cookie(
         key="refresh_token",
         httponly=True,
-        secure=True,
+        secure=False,### A MODIFIER LORS DU DEPLOIEMENT
         samesite="strict",
         path="/auth/refresh",
     )

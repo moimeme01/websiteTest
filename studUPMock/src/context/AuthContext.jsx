@@ -10,27 +10,21 @@ export function AuthProvider({ children }) {
 
     useEffect(() => {
         // Check if the user is already connected
-        const checkAuth = async () => {
-            const token = localStorage.getItem("access_token");
-
-            if (!token) {
-                setLoading(false);
-                return;
-            }
-
+        const restoreUser = async () => {
             try { // Check the token with /users/me
-                const userData = await authService.get_profile();
-                setUser(userData);
-            } catch (error) {
-                // Invalid or expired token 
-                localStorage.removeItem("access_token");
-                setUser(null);
+                const userData = await authService.restoreSession();
+                
+                if (userData) {
+                    setUser(userData);
+                } else {
+                    setUser(null);
+                }
             } finally {
                 setLoading(false);
             }
         };
 
-        checkAuth();
+        restoreUser();
     }, []);
 
 
@@ -48,6 +42,11 @@ export function AuthProvider({ children }) {
         return response;
     }
 
+    const unauthorized = async () => {
+        const response = await authService.get_pending_users();
+        return response;
+    }
+    
     const logout = async () => {
         await authService.logout();
         setUser(null);
@@ -59,7 +58,8 @@ export function AuthProvider({ children }) {
         isAuthenticated: !!user,
         login,
         register,
-        logout
+        unauthorized,
+        logout,
     };
     
     return (

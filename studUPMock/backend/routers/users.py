@@ -3,6 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from http import HTTPStatus
 from typing import Optional
+from jose import JWTError
 
 from core.security import decode_token
 from schemas.user import AdminResponse, UserPublic
@@ -15,50 +16,62 @@ router = APIRouter(prefix="/users", tags=["Users"])
 def get_current_user_from_token(
     authorization: Optional[str] = Header(default=None)
 ) -> dict:
-    print("Authorization received:", repr(authorization))
 
     if not authorization:
         print("Authorization header missing")
         raise HTTPException(
             status_code=401,
-            detail="Missing Authorization header"
+            detail="Missing Authorization header",
+            headers={"WWW-Authenticate": "Bearer"}
         )
 
     if not authorization.startswith("Bearer "):
         print("Invalid Authorization format")
         raise HTTPException(
             status_code=401,
-            detail="Invalid Authorization header"
+            detail="Invalid Authorization header",
+            headers={"WWW-Authenticate": "Bearer"}
         )
 
     token = authorization.removeprefix("Bearer ").strip()
+    if not token:
+        raise HTTPException(
+            status_code=401,
+            detail="Missing Bearer token",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
 
-    print("Token received:", token[:30] + "...")
 
-    payload = decode_token(token)
-
-    print("Decoded payload:", payload)
+    try:
+        payload = decode_token(token)
+    except JWTError:
+        print("Token could not be decoded.")
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired access token",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
 
     if not payload:
         print("Token could not be decoded")
         raise HTTPException(
             status_code=401,
-            detail="Invalid or expired access token"
+            detail="Invalid or expired access token",
+            headers={"WWW-Authenticate": "Bearer"}
         )
-
-    print("Token type:", payload.get("type"))
 
     if payload.get("type") != "access":
         raise HTTPException(
             status_code=401,
-            detail="Invalid token type"
+            detail="Invalid token type",
+            headers={"WWW-Authenticate": "Bearer"}
         )
 
     return payload
 
 @router.get('/requested', status_code=HTTPStatus.OK, response_model=AdminResponse)
 def return_unauth_users(session: Session = Depends(get_session)):
-
+    print("Searchign for unauth users")
     unauth_users = session.scalars(
         select(User).where(User.authorized == False)
     ).all()

@@ -4,6 +4,10 @@ import { useAuth } from "./AuthContext"
 function AdminRoute ({ children }) {
     const { user, loading } = useAuth();
 
+    if (loading) {
+        return <div>Chargement...</div>;
+    }
+    
     if (!user) {
         return <Navigate to="/login" replace />
     } else if (user.role == "student") {

@@ -117,7 +117,50 @@ section {
     gap: 1rem;
 }
 
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid #e9e9e9;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
 
+.adminTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
+.adminTable th {
+    padding: 16px;
+    text-align: left;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #e5e7eb;
+}
+.adminTable td {
+    padding: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.adminTable tbody tr {
+    transition: 0.4s ease;
+}
+
+.adminTable tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+.db-table tbody tr:last-child td {
+  border-bottom: none;
+}
 
 Link, Link:visited {
     color: #006eff;
