@@ -67,8 +67,12 @@ const Login = (e) => {
             console.log("There is an error.");
             console.log(err);
             console.log(err.response?.data?.detail);
-            if (err?.response) {
-                setErrMsg(err.response?.data?.detail)
+            if (err?.response?.data) {
+                if (err.response?.data?.detail) {
+                    setErrMsg(err.response?.data?.detail)
+                } else {
+                    setErrMsg(err.response?.data)
+                }
             }
             errRef.current.focus();
         }
