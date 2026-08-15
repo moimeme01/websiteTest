@@ -15,6 +15,7 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 env = dotenv_values("./.env")
 
 is_production = env["ENVIRONMENT"] == "production"
+print(is_production)
 
 @router.post("/register", status_code=HTTPStatus.CREATED, response_model=UserPublic)
 def register_user(user: UserRegister, session: Session = Depends(get_session)):
@@ -165,7 +166,7 @@ def refresh_access_token(request: Request, response: Response, session: Session 
         secure=is_production,
         samesite="lax",
         max_age=7*24*60*60, #7 days
-        path="/auth/refresh",
+        path="/",
     )
 
     return {"access_token": new_access, "role": dbuser.role, "authorized": dbuser.authorized}
@@ -177,6 +178,6 @@ def logout_user(response: Response):
         httponly=True,
         secure=is_production,
         samesite="lax",
-        path="/auth/refresh",
+        path="/",
     )
     return {"message": "Logged out successfully!"}
