@@ -14,7 +14,7 @@ from database import get_session
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 env = dotenv_values("./.env")
 
-
+is_production = env["ENVIRONMENT"] == "production"
 
 @router.post("/register", status_code=HTTPStatus.CREATED, response_model=UserPublic)
 def register_user(user: UserRegister, session: Session = Depends(get_session)):
@@ -103,8 +103,8 @@ def return_user(user: UserSchema, response: Response, session: Session = Depends
         key="refresh_token",
         value=refresh_token,
         httponly=True,
-        secure=False, ### A MODIFIER LORS DU DEPLOIEMENT
-        samesite="strict",
+        secure=is_production,
+        samesite="lax",
         max_age=7*24*60*60, #7 days
         path="/",
     )
@@ -162,8 +162,8 @@ def refresh_access_token(request: Request, response: Response, session: Session 
         key="refresh_token",
         value=new_refresh,
         httponly=True,
-        secure=False,### A MODIFIER LORS DU DEPLOIEMENT
-        samesite="strict",
+        secure=is_production,
+        samesite="lax",
         max_age=7*24*60*60, #7 days
         path="/auth/refresh",
     )
@@ -175,8 +175,8 @@ def logout_user(response: Response):
     response.delete_cookie(
         key="refresh_token",
         httponly=True,
-        secure=False,### A MODIFIER LORS DU DEPLOIEMENT
-        samesite="strict",
+        secure=is_production,
+        samesite="lax",
         path="/auth/refresh",
     )
     return {"message": "Logged out successfully!"}
