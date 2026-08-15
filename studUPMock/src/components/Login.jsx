@@ -2,11 +2,12 @@ import { useRef, useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from '../api/axios';
-import AuthContext, { useAuth } from "../context/AuthProvider";
+import { useAuth } from "../context/AuthContext";
+import { faPassport } from "@fortawesome/free-solid-svg-icons";
 const LOGIN_URL = '/login';
 
 const Login = (e) => {
-    const {setAuth} = useContext(AuthContext);
+ 
     const navigate = useNavigate();
     const { login } = useAuth();
     const userRef = useRef("");
@@ -17,15 +18,13 @@ const Login = (e) => {
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false);
 
-    const [loggedUser, setLoggedUser] = useState('');
-
     useEffect( () => {
         userRef.current.focus();
-    }, [])
+    }, []);
 
     useEffect( () => {
         setErrMsg("");
-    }, [user, pwd])
+    }, [user, pwd]);
 
     const handleLogIn = async(e) => {
         e.preventDefault();
@@ -36,32 +35,18 @@ const Login = (e) => {
             return;
         }
         try {
-            console.log("Searching the DB for the user")
-            const response = await axios.post(LOGIN_URL, 
-                { username: user, password: pwd },
-                {
-                    headers: { 'Content-Type': 'application/json' },
-                    withCredentials: true
-                }
-            );
-            console.log("user found in the database.")
-            const authUser = response.data.user;
-            const authAccessToken = response.data.accessToken;
-            console.log(authUser)
-            login({
-                username: authUser.username,
-                role: authUser.role, 
-                authorized: authUser.authorized,
-                accessToken: authAccessToken,
-            });
-            console.log("arrived after login.")
-            console.log(authUser)
-            console.log(authUser.authorised)
+            console.log("Searching the DB for the user");
+            const response = await login(user, pwd);
+
+            console.log("user found in the database.");
+            
+            console.log("arrived after login.");
+            
             let route;
-            if (authUser.authorized){
-                if (authUser.role === "admin"){
+            if (response.authorized){
+                if (response.role === "admin"){
                     route = "/admin";
-                } else if (authUser.role === "Enseignant.e"){
+                } else if (response.role === "Enseignant.e"){
                     route = "/professor"
                 } else {
                     route = "/student"
@@ -69,25 +54,21 @@ const Login = (e) => {
             } else {
                 route = "/unauthorizedRoute"
             }
-            setLoggedUser(user)
+
             setUser("");
             setPwd("");
             setSuccess(true);
             console.log("All reset")
+            console.log("navigate to route")
+            console.log(route)
             navigate(route);
             console.log("end of try.")
         } catch (err) {
-            console.log("There is an error.")
-            console.log(err)
-            if (!err?.response) {
-                console.log(err?.response)
-                setErrMsg("No Server Response")
-            } else if (err.response?.status === 400) {
-                setErrMsg('Missing Username or Password');
-            } else if (err.response?.status === 401) {
-                setErrMsg("Username not found or password incorrect");
-            } else {
-                setErrMsg('Login Failed')
+            console.log("There is an error.");
+            console.log(err);
+            console.log(err.response?.data?.detail);
+            if (err?.response) {
+                setErrMsg(err.response?.data?.detail)
             }
             errRef.current.focus();
         }

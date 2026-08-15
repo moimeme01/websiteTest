@@ -19,7 +19,7 @@ export function AuthProvider({ children }) {
             }
 
             try { // Check the token with /users/me
-                const userData = await authService.getProfile();
+                const userData = await authService.get_profile();
                 setUser(userData);
             } catch (error) {
                 // Invalid or expired token 
@@ -35,8 +35,12 @@ export function AuthProvider({ children }) {
 
 
     const login = async (username, password) => {
-        const data = await authService.login(username, password);
-        const userdata = await authService.getProfile();
+        await authService.login(username, password);
+        const userdata = await authService.get_profile();
+        setUser(userdata);
+        console.log("User loaded after refresh:", userdata);
+
+        return userdata;
     }
 
     const register = async (userData) => {

@@ -74,9 +74,11 @@ def return_user(user: UserSchema, response: Response, session: Session = Depends
     dbuser = session.scalar(
         select(User).where(User.username == user.username)
     )
-    print("user found.")
+    if dbuser:
+        print("user found.")
 
     if not dbuser: 
+        print("There is no user")
         #Database don't have the user. 
         raise HTTPException(status_code=401, detail="It seems you don't have an account. Go to the Sign Up page.")
 

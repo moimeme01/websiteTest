@@ -1,14 +1,14 @@
 import { Navigate, Outlet } from "react-router-dom"
-import { useAuth } from "./AuthProvider"
+import { useAuth } from "./AuthContext"
 
 function AdminRoute ({ children }) {
-    const { auth } = useAuth();
+    const { user, loading } = useAuth();
 
-    if (!auth?.accessToken) {
+    if (!user) {
         return <Navigate to="/login" replace />
-    } else if (auth?.accessToken.role == "student") {
+    } else if (user.role == "student") {
         return <Navigate to="/student" replace />
-    } else if (auth?.accessToken.role == "professor") {
+    } else if (user.role == "professor") {
         return <Navigate to="/professor" replace />
     }
 
