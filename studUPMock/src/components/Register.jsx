@@ -335,7 +335,7 @@ const Register = () => {
                                         type="radio"
                                         name="role"
                                         id="professor-role"
-                                        checked={role ==="professor"}
+                                        checked={role === "professor"}
                                         onChange={(e) => setRole(e.target.value)}
                                         value="professor"
                                         required

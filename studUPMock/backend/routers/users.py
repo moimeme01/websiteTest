@@ -76,9 +76,28 @@ def return_unauth_users(session: Session = Depends(get_session)):
         select(User).where(User.authorized == False)
     ).all()
     print("Unauth users are here below:")
-    print(unauth_users)
-
     return {"users": unauth_users}
+
+@router.get("/authorized", status_code=HTTPStatus.OK, response_model=AdminResponse)
+def return_auth_users(session: Session = Depends(get_session)):
+    print("Searching for authorized users")
+    auth_users = session.scalars(
+        select(User).where(User.authorized == True)
+    ).all()
+    print("founded users!")
+    return {"users": auth_users}
+
+@router.put("/authorizing", status_code=HTTPStatus.OK)
+def authorizing_users(list_of_users: list[int], session: Session = Depends(get_session)):
+    print("Authorization of users: ", list_of_users)
+    for element in list_of_users:
+        print("Authorizing user with id: ", element)
+        dbuser = session.scalar(select(User).where(User.id == int(element)))
+        print("Founded user: ", dbuser)
+        dbuser.authorized = True
+    session.commit()
+    return "Done"
+
 
 @router.get('/me', response_model=UserPublic)
 def get_current_user_profile(session: Session = Depends(get_session), current_user: dict = Depends(get_current_user_from_token)):

@@ -25,8 +25,19 @@ export const authService = {
     }, 
 
     async get_pending_users() {
-        console.log("get pending users function working")
-        const response = await api.get("/users/requested")
+        console.log("get pending users function working");
+        const response = await api.get("/users/requested");
+        return response;
+    },
+
+    async get_authorized_users() {
+        console.log("getting the authorized users");
+        const response = await api.get("/users/authorized");
+        return response;
+    },
+
+    async authorizing_users(listOfUsers) {
+        const response = await api.put("/users/authorizing", listOfUsers);
         return response;
     },
 

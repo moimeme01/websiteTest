@@ -46,6 +46,16 @@ export function AuthProvider({ children }) {
         const response = await authService.get_pending_users();
         return response;
     }
+
+    const authorized = async () => {
+        const response = await authService.get_authorized_users();
+        return response;
+    }
+
+    const authorization = async (listOfUsers) => {
+        const response = await authService.authorizing_users(listOfUsers);
+        return response;
+    }
     
     const logout = async () => {
         await authService.logout();
@@ -59,6 +69,8 @@ export function AuthProvider({ children }) {
         login,
         register,
         unauthorized,
+        authorized,
+        authorization,
         logout,
     };
     
