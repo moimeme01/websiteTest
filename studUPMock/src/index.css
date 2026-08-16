@@ -1,3 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400&display=swap");
+
+
+
 
 * {
     margin: 0;
@@ -162,7 +167,7 @@ section {
   border-bottom: none;
 }
 
-Link, Link:visited {
+Link {
     color: #006eff;
 }
 
@@ -229,4 +234,132 @@ button {
 
 .line {
     display: inline-block;
+}
+
+.header_style {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: fit-content;
+    padding: 26px 30px;
+}
+
+.header_box_right {
+    display: flex;
+    flex-direction: row;
+    padding: 14px 30px;
+    gap: 40px;
+    align-items: center;
+}
+
+.header_link {
+    color: #111827;
+    text-decoration: none;
+    font-family: 'Nunito Sans';
+    font-weight: medium;
+    font-size: 14pt;
+}
+
+.header_link:hover {
+    text-decoration: underline;
+}
+
+.header_button {
+    color: #387f81
+}
+
+.logo {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+}
+
+.logo_title {
+    color: black;
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.logo_subtitle {
+    color: #9f9f9f;
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 0.2px;
+}
+
+.home_layout {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto auto;
+    width: 100%;
+    height: fit-content;
+    gap: 30px;
+    padding: 30px 30px;
+}
+
+.home_disclaimer {
+    font-weight: 700;
+    line-height: 150%;
+    padding: 15px;
+    text-align: center;
+    height: fit-content;
+    background-color: #ee5c5c;
+    grid-column: 1/-1;
+    grid-row: 1/2;
+}
+
+.home_title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 35px;
+    line-height: 1;
+    color: #111827;
+}
+
+.home_title .studup {
+    color: #387f81;
+}
+
+.home_text1 {
+    align-content: start;
+    color: #4b5563;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    line-height: 150%;
+    font-size: 17px;
+    letter-spacing: 0;
+    grid-column: 1/2;
+    grid-row: 2/3;
+}
+
+.home_text2 {
+    align-content: start;
+    color: #4b5563;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    line-height: 150%;
+    font-size: 17px;
+    letter-spacing: 0;
+    grid-column: 2/3;
+    grid-row: 3/4;
+}
+
+.home_footer {
+    text-align: center;
+    grid-column: 1/-1;
+    grid-row: 4/5;
+}
+
+
+.home_text2 p {
+    margin-bottom: 20px;
+}
+
+.home_text2 ul {
+    margin-bottom: 20px;
+    padding-left: 24px;
 }

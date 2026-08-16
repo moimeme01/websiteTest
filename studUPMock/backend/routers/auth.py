@@ -15,7 +15,7 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 env = dotenv_values("./.env")
 
 is_production = env["ENVIRONMENT"] == "production"
-print(is_production)
+print("Server running on production? ", is_production)
 
 @router.post("/register", status_code=HTTPStatus.CREATED, response_model=UserPublic)
 def register_user(user: UserRegister, session: Session = Depends(get_session)):
@@ -120,6 +120,7 @@ def refresh_access_token(request: Request, response: Response, session: Session 
     print("refresh token is ", refresh_token)
 
     if not refresh_token:
+        print("we are in this error")
         raise HTTPException(status_code=401, detail="No refresh token provided")
 
     try:

@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
         const restoreUser = async () => {
             try { // Check the token with /users/me
                 const userData = await authService.restoreSession();
-                
+                console.log("trying to restore the session")
                 if (userData) {
                     setUser(userData);
                 } else {
@@ -58,8 +58,14 @@ export function AuthProvider({ children }) {
     }
     
     const logout = async () => {
-        await authService.logout();
-        setUser(null);
+        try {
+            await authService.logout();
+        } catch (error) {
+            console.log("Logout request faied with error code: ", error);
+        } finally {
+            setUser(null);
+            localStorage.removeItem("acess_token");
+        }
     }
 
     const value = {

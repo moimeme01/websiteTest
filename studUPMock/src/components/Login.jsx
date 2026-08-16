@@ -1,6 +1,5 @@
 import { useRef, useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link , useNavigate} from "react-router-dom";
 import axios from '../api/axios';
 import { useAuth } from "../context/AuthContext";
 import { faPassport } from "@fortawesome/free-solid-svg-icons";
@@ -46,7 +45,7 @@ const Login = (e) => {
             if (response.authorized){
                 if (response.role === "admin"){
                     route = "/admin";
-                } else if (response.role === "Enseignant.e"){
+                } else if (response.role === "professor"){
                     route = "/professor"
                 } else {
                     route = "/student"
