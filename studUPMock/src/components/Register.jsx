@@ -46,7 +46,8 @@ const Register = () => {
     const [role, setRole] = useState(""); 
     const [teacher, setTeacher] = useState("");
     const [school, setSchool] = useState("");
-    const [classroom, setClassroom] = useState("");
+    const [classroom_id, setClassroom] = useState(0);
+    const [groups, setGroups] = useState("");
 
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false);
@@ -80,7 +81,14 @@ const Register = () => {
         setErrMsg('');
     }, [userName, pwd, matchPwd, email])
 
-
+    const fetchGroups = async () => {
+        try {
+            const response = await api.get("/groups/list");
+            setGroups(response.data);
+        } catch (error) {
+            console.log("Could not find the classes", error.response)
+        }
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -93,6 +101,7 @@ const Register = () => {
         }
         try {
             console.log("trying to register")
+
             const response = await register(
                 { 
                     firstName: firstName,
@@ -101,7 +110,7 @@ const Register = () => {
                     password: pwd,
                     email: email,
                     role: role,
-                    classroom: classroom,
+                    classroom: classroom_id,
                     school: school,
                     professor: teacher
                 },
@@ -365,12 +374,15 @@ const Register = () => {
                                 <select 
                                     name="class" 
                                     id="class-select" 
-                                    value={classroom}
+                                    value={classroom_id}
+
                                     onChange={(e) => setClassroom(e.target.value)}
                                     >
                                     <option value=""> -- Choisissez une classe -- </option>
-                                    <option value="4TQ"> 4 TQ </option>
-                                    <option value="3GTC"> 3 GT C</option>
+                                    {groups.map(group => {
+
+                                        <option key={group.group_id} value={group.group_id}> {group.name} </option>
+                                    })}
                                 </select>
                             </div>
                             <div className="form-field">

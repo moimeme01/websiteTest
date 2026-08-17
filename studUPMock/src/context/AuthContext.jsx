@@ -7,6 +7,12 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [hasLoggedOut, setHasLoggedOut] = useState(false);
+
+    useEffect(() => {
+        console.log("user updated:", user);
+    }, [user]);
+
 
     useEffect(() => {
         // Check if the user is already connected
@@ -15,6 +21,7 @@ export function AuthProvider({ children }) {
                 const userData = await authService.restoreSession();
                 console.log("trying to restore the session")
                 if (userData) {
+                    console.log("founded one user ", userData)
                     setUser(userData);
                 } else {
                     setUser(null);
@@ -58,13 +65,17 @@ export function AuthProvider({ children }) {
     }
     
     const logout = async () => {
+        console.log("We are going to try")
         try {
             await authService.logout();
+            localStorage.removeItem("access_token");
+            setUser(null);
         } catch (error) {
             console.log("Logout request faied with error code: ", error);
         } finally {
+            localStorage.removeItem("access_token");
             setUser(null);
-            localStorage.removeItem("acess_token");
+            setHasLoggedOut(true);
         }
     }
 

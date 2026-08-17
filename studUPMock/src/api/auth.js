@@ -15,7 +15,8 @@ export const authService = {
     },
     
     async logout() {
-        await logoutRequest;
+        console.log("Calling out async loggout")
+        return logoutRequest();
     },
 
     async get_profile() {
@@ -55,7 +56,7 @@ export const authService = {
             const userdata = await this.get_profile();
             return userdata;
         } catch (error) {
-            if (status === 401) {
+            if (error.response?.status === 401) {
                 console.log('No active session');
 
                 localStorage.removeItem('access_token');

@@ -100,17 +100,18 @@ api.interceptors.response.use(
 );
 
 export async function logoutRequest() {
-  isLoggingOut = true;
+    console.log("Into the async function logOutRequest.")
+    isLoggingOut = true;
 
-  try {
-    await api.post('/auth/logout', null, {
-      skipAuthRefresh: true,
-    });
-  } finally {
-    removeAccessToken();
-    refreshPromise = null;
-    isLoggingOut = false;
-  }
+    try {
+        await api.post('/auth/logout', null, {
+        skipAuthRefresh: true,
+        });
+    } finally {
+        remove_accesstoken();
+        refreshPromise = null;
+        isLoggingOut = false;
+    }
 }
 
 

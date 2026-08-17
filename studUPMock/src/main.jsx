@@ -7,7 +7,7 @@ import ProfessorRoute from "./context/ProfessorRoute"
 import AdminRoute from "./context/AdminRoute"
 import StudentRoute from "./context/StudentRoute"
 
-import {AdminPage, App, Home, Login, Register, UserConnected, UnauthorizedRoute, Professor, Layout} from "./components"
+import {AdminPage, App, Home, Login, Register, UserConnected, UnauthorizedRoute, Professor, Layout, Aide} from "./components"
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -19,7 +19,7 @@ createRoot(document.getElementById('root')).render(
             <Route path='/register' element={<Register />} />
             <Route path='/home' element={<Home />} />
             <Route path='/unauthorizedRoute' element={<UnauthorizedRoute/>}/>
-
+            <Route path='/aide' element={<Aide/>}/> 
             <Route element= {<ProfessorRoute/>}>
               <Route path='/professor' element={<Professor/>}/>
             </Route>
@@ -31,7 +31,6 @@ createRoot(document.getElementById('root')).render(
             <Route element= {<AdminRoute/>}>
               <Route path='/admin' element={<AdminPage/>}/>
             </Route>
-
           </Route>
           
           <Route path='/login' element={<Login />} />

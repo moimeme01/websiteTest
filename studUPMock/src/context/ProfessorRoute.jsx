@@ -7,12 +7,16 @@ function ProfessorRoute ( { children } ){
     if (loading) {
         return <div>Chargement...</div>;
     }
-
-    if (user.authorized === false) {
-        return <Navigate to="/unauthorized" replace />;
-    } else if (user.role !== "professor") {
-        return <Navigate to="/student" replace />;
-    } 
+    try {
+        if (user.authorized === false) {
+            return <Navigate to="/unauthorized" replace />;
+        } else if (user.role !== "professor") {
+            return <Navigate to="/student" replace />;
+        } 
+    } catch (error) {
+        return <Navigate to="/home" replace/>;
+    }
+    
     return  <Outlet/>;
 }
 export default ProfessorRoute;

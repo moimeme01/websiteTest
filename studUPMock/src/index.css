@@ -269,6 +269,15 @@ button {
     color: #387f81
 }
 
+.footer_style {
+    display: flex;
+    padding: 26px 30px;
+    flex-direction: column;
+    background-color: #9f9f9f;
+    text-align: center;
+    width: 100%;
+}
+
 .logo {
     display: flex;
     flex-direction: column;
@@ -281,6 +290,7 @@ button {
     font-size: 30px;
     font-weight: 800;
     letter-spacing: -0.5px;
+    text-decoration: none;
 }
 
 .logo_subtitle {

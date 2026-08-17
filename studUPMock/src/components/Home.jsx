@@ -56,12 +56,7 @@ const Home = () => {
             
             <div className="home_footer">
                 <p>
-                    <Link to="/login"> Log in </Link>
-                </p>
-                <p>
-                    En revanche, si vous souhaitez demander un accès au site, vous pouez remplir le formulaire
-                    d'inscription et je reviendrai vers vous dès que possible. <br/>
-                    <Link to="/register"> Demander un accès </Link>
+                    
                 </p>
             </div>
         </div>
