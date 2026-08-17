@@ -25,9 +25,9 @@ def main() -> None:
                 password=hash_password(ADMIN_PASSWORD),
                 email = ADMIN_EMAIL,
                 role="admin",
-                classroom="",
                 school="",
                 professor="",
+                classroom_id=0
             )
             session.add(admin)
 

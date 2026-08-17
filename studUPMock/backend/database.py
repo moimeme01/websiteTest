@@ -1,6 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
+from models.user import User
+from models.groups import Groups
+
+
 from core.config import settings
 
 

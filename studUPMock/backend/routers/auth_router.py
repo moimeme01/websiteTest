@@ -44,7 +44,7 @@ def register_user(user: UserRegister, session: Session = Depends(get_session)):
         password=hashed_password,
         email=user.email,
         role=user.role,
-        classroom=user.classroom,
+        classroom_id=user.classroom_id,
         school=user.school,
         professor=user.professor
     )

@@ -1,8 +1,9 @@
-from sqlalchemy import func
-from sqlalchemy.orm import Mapped, mapped_as_dataclass, mapped_column, registry 
-from datetime import datetime
+from sqlalchemy.orm import Mapped, mapped_as_dataclass, mapped_column, registry, relationship
+from sqlalchemy import ForeignKey
+from typing import TYPE_CHECKING
 
-table_registry = registry()
+from .groups import Groups
+from models import table_registry
 
 @mapped_as_dataclass(table_registry)
 class User: 
@@ -21,7 +22,8 @@ class User:
 
     role:Mapped[str]
     first_visit: Mapped[bool] = mapped_column(init=False, default=True)
-    classroom: Mapped[str] = mapped_column(nullable=False)
+    classroom_id: Mapped[int] = mapped_column(ForeignKey("groups.group_id"), nullable=False)
     school: Mapped[str] = mapped_column(nullable=False)
     professor: Mapped[str]
 
+    classroom: Mapped["Groups"] = relationship(foreign_keys=[classroom_id], back_populates="student", init=False)

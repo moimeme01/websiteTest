@@ -4,8 +4,8 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
-
-from models.user import table_registry      
+import models
+from models import table_registry      
 from core.config import Settings  
 
 

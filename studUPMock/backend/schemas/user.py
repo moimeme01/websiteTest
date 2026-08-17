@@ -13,7 +13,7 @@ class UserPublic(BaseModel):
     username: str
     email: EmailStr
     role: str
-    classroom: str
+    classroom_id: int
     school: str
     professor: str
     authorized: bool
@@ -30,7 +30,7 @@ class UserRegister(BaseModel):
     password: str
     email: EmailStr
     role: str
-    classroom: str
+    classroom_id: int
     school: str
     professor: str
 

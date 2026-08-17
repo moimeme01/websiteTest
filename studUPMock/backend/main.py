@@ -1,7 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from models.user import User
+from models.groups import Groups
 from dotenv import dotenv_values
-from routers import auth, users
+from routers import users_router, auth_router, group_router
 
 app = FastAPI()
 env = dotenv_values("./.env")
@@ -16,8 +19,10 @@ app.add_middleware(
     allow_headers=["Content-Type", "Authorization"],
 )
 
-app.include_router(auth.router, prefix="/api")
-app.include_router(users.router, prefix="/api")
+app.include_router(auth_router.router, prefix="/api")
+app.include_router(users_router.router, prefix="/api")
+app.include_router(group_router.router, prefix="/api")
+
 
 @app.get("/")
 def root():
