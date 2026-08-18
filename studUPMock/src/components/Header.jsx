@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -5,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 function Header () {
     const { user, isAuthenticated, logout } = useAuth();
     const  navigate  = useNavigate();
+    const [ isProfessorConnected, setIsProfessorConnected] = useState(false);
 
     async function handleLogout() {
         navigate("/home", {replace: true});
@@ -14,17 +16,32 @@ function Header () {
         
     }
 
-    async function isProfessor(){
-        try {
-            if (user.role === "professor"){
-                return true;
-            } else {
-                return false;
+    useEffect(() => {
+        const isProfessorConnected = async () => {
+            console.log("checking if user is connected and a professor: ")
+            
+            try {
+                if (isAuthenticated) { 
+                    console.log("is connected")
+                    if (user.role === "professor"){
+                        console.log("is professor")
+                        console.log("check ended")
+                        setIsProfessorConnected(true);
+                    } else {
+                        console.log("is not professor")
+                        console.log("check ended")
+                        setIsProfessorConnected(true);
+                    }
+                }
+            } catch (error) {
+                setIsProfessorConnected(true);
+                return error;
             }
-        } catch (error) {
-            return false;
+        
         }
-    }
+    }, [isAuthenticated, user?.role]);
+    
+
     return (
         <> 
         <header className="header_style">
@@ -34,9 +51,9 @@ function Header () {
             </div>
             <div className="header_box_right">
                 <Link className="header_link" hidden={isAuthenticated}> A propos </Link>
-                <Link className="header_link" hidden={!isAuthenticated || !isProfessor}> Rapport </Link>
-                <Link className="header_link" hidden={!isAuthenticated || !isProfessor}> Mes Tests </Link>
-                <Link className="header_link" hidden={!isAuthenticated || !isProfessor}> Mes Classes </Link>
+                <Link className="header_link" hidden={!isProfessorConnected}> Rapport </Link>
+                <Link className="header_link" hidden={!isProfessorConnected}> Mes Tests </Link>
+                <Link className="header_link" hidden={!isProfessorConnected}> Mes Classes </Link>
                 <Link className="header_link" to='/aide'> Aide </Link>
                 <Link className="header_link" to="/register" hidden={isAuthenticated}> Nouvel utilisateur </Link>
                 <Link className="header_link" to="/login" hidden={isAuthenticated}> Connexion </Link>

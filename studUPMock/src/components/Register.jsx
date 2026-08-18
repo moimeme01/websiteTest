@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from "react";
+import api from "../api/axios"
 import { Link } from "react-router-dom";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -89,6 +90,9 @@ const Register = () => {
             console.log("Could not find the classes", error.response)
         }
     }
+
+    fetchGroups()
+    console.log(groups)
 
     const handleSubmit = async (e) => {
         e.preventDefault();
