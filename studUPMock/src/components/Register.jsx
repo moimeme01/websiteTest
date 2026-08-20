@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAuth } from "../context/AuthContext";
+import { authService } from "../api/auth";
+import { groupService } from "../api/groups";
+import { CircleAlert } from "lucide-react";
 
 const FIRSTNAME_REGEX = /^[A-Z][a-z]{2,19}$/;
 const LASTNAME_REGEX = /^[A-Z][a-z]{2,19}$/;
@@ -48,13 +51,17 @@ const Register = () => {
     const [teacher, setTeacher] = useState("");
     const [school, setSchool] = useState("");
     const [classroom_id, setClassroom] = useState(0);
-    const [groups, setGroups] = useState("");
+
+    const [groupList, setGroupList] = useState({groups: []});
+    const [profList, setProfList] = useState({users: []});
 
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false);
 
     useEffect(() => {
         userRef.current.focus();
+        fetchGroups();
+        fetchProfs();
     }, [])
 
     useEffect(() => {
@@ -82,17 +89,23 @@ const Register = () => {
         setErrMsg('');
     }, [userName, pwd, matchPwd, email])
 
-    const fetchGroups = async () => {
+    async function fetchGroups () {
         try {
-            const response = await api.get("/groups/list");
-            setGroups(response.data);
+            const response = await groupService.getGroupList();
+            setGroupList(response.data);
         } catch (error) {
             console.log("Could not find the classes", error.response)
         }
     }
-
-    fetchGroups()
-    console.log(groups)
+    async function fetchProfs () {
+        try {
+            const response = await authService.get_prof_list();
+            console.log("here are the professors founded in the DB: ", response.data);
+            setProfList(response.data);
+        } catch (error) {
+            console.log("Could not find the professors", error.response)
+        }
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -114,7 +127,7 @@ const Register = () => {
                     password: pwd,
                     email: email,
                     role: role,
-                    classroom: classroom_id,
+                    classroom_id: classroom_id,
                     school: school,
                     professor: teacher
                 },
@@ -149,6 +162,7 @@ const Register = () => {
             errRef.current.focus();
         }
     }
+    
 
     return (
         <>
@@ -161,9 +175,10 @@ const Register = () => {
                     </p>
                 </section>
             ) : (
-                <section>
+                <section className="registerSection">
                     <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-                    <p> Ici, vous pouvez demander un compte StudUp. Ce compte vous donnera accès 
+                    <p className="register_disclaimer"> 
+                        <CircleAlert /> Ici, vous pouvez demander un compte StudUp. Ce compte vous donnera accès 
                         à toutes les ressources mises à disposition par vos enseignantes et enseignants inscrits sur le site.
                         Une fois le formulaire rempli, votre demande sera soumise et analysée par l'équipe. Veillez à 
                         ce que toutes vos données soient correctes et plus particulièrement votre adresse 
@@ -171,7 +186,6 @@ const Register = () => {
                         nouveaux tests disponibles, résultats disponibles, etc. vous seront communiquées.
                     </p>
                     <form onSubmit={handleSubmit} className="register-form">
-                        <h1> Enregistrement </h1>
                         <fieldset className="form-section">
                             <legend> Informations personnelles </legend>
 
@@ -288,7 +302,7 @@ const Register = () => {
 
                             <div className="form-field">
                                 <label htmlFor="password">
-                                    Password:
+                                    Mot de passe:
                                     <FontAwesomeIcon icon={faCheck} className={validPwd ? "valid" : "hide"} />
                                     <FontAwesomeIcon icon={faTimes} className={validPwd || !pwd ? "hide" : "invalid"} />
                                 </label>
@@ -315,7 +329,7 @@ const Register = () => {
 
                             <div className="form-field">
                                 <label htmlFor="confirm_pwd">
-                                    Confirm Password:
+                                    Confirmer le mot de passe:
                                     <FontAwesomeIcon icon={faCheck} className={validMatch && matchPwd ? "valid" : "hide"} />
                                     <FontAwesomeIcon icon={faTimes} className={validMatch || !matchPwd ? "hide" : "invalid"} />
                                 </label>
@@ -353,7 +367,7 @@ const Register = () => {
                                         value="professor"
                                         required
                                     />
-                                    Enseignant•e
+                                    Enseignant-e
                                 </label>
                                 <label htmlFor="student-role">
                                     <input
@@ -364,12 +378,13 @@ const Register = () => {
                                         onChange={(e) => setRole(e.target.value)}
                                         value="student"
                                     />
-                                    Etudiant•e
+                                    Etudiant-e
                                 </label>
                             </div>
                         </fieldset>
 
-                        <fieldset className="form-section">
+                        
+                        <fieldset className="form-section" style={{display: 'none'}}>
                             <legend> Informations complémentaires </legend>
                             <div className="form-field">
                                 <label htmlFor="class-select">
@@ -383,9 +398,8 @@ const Register = () => {
                                     onChange={(e) => setClassroom(e.target.value)}
                                     >
                                     <option value=""> -- Choisissez une classe -- </option>
-                                    {groups.map(group => {
-
-                                        <option key={group.group_id} value={group.group_id}> {group.name} </option>
+                                    {groupList.groups.map(groups => {
+                                        <option key={groups.group_id} value={groups.group_id}> {groups.name} </option>
                                     })}
                                 </select>
                             </div>
@@ -404,19 +418,15 @@ const Register = () => {
                                 </label>
                                 <select name="professor" id="prof-select" value={teacher} onChange={(e) => setTeacher(e.target.value)} disabled={role==="professor"}>
                                     <option value=""> -- Choisissez un professeur -- </option>
-                                    <option value="GColaux"> G. Colaux </option>
+                                    { profList.users && profList.users.length > 0 ? (profList.users.map(
+                                        e => <option key={e.professor_id} value={e.professor_id}> {e.lastName}</option>
+                                    )): null }
                                 </select>
                             </div>
                         </fieldset>
                         
                         <button className="form-button" disabled={!validLastName || !validFirstName || !validUserName || !validPwd || !validMatch || !validEmail || !role}>Sign Up</button>
                     </form>
-                    <p>
-                        Already registered?<br />
-                        <span className="line">
-                            <Link to="/login">Sign In</Link>
-                        </span>
-                    </p>
                 </section>
             )}
         </>

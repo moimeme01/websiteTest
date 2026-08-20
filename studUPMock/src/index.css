@@ -36,6 +36,10 @@ body {
     align-items: center;
 }
 
+main {
+    width: 100%;
+}
+
 section {
     display: flex;
     width: 100%;
@@ -62,21 +66,27 @@ section {
     width: 100%;
     max-width: 800px;
     padding-bottom: 1rem;
+    background-color: #00000006;
+    border-radius: 20px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #00000007;
+    padding: 10px;
+    font-family: 'Nunito Sans', sans-serif;
 }
 
-.register-form h1 {
-    grid-column: 1 / -1;
-    text-align: center;
-}
 
 .form-section {
     display: grid;
+    border: none;
     gap: 1rem;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     padding-bottom: 1rem;
 }
 
 .form-section legend {
+    font-size: 20px;
+    font-weight: 500;
     display: flex;
     align-items: center;
 }
@@ -125,10 +135,15 @@ section {
 .table-container {
   width: 100%;
   overflow-x: auto;
+  overflow-y: auto;
   background: #fff;
   border: 1px solid #e9e9e9;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.table-container h1 {
+    font-family: 'Nunito';
 }
 
 .adminTable {
@@ -148,8 +163,10 @@ section {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    
     border-bottom: 1px solid #e5e7eb;
 }
+
 .adminTable td {
     padding: 16px;
     border-bottom: 1px solid #f0f0f0;
@@ -251,13 +268,13 @@ button {
     padding: 14px 30px;
     gap: 40px;
     align-items: center;
+    justify-content: center;
 }
 
 .header_link {
     color: #111827;
     text-decoration: none;
     font-family: 'Nunito Sans';
-    font-weight: medium;
     font-size: 14pt;
 }
 
@@ -266,8 +283,46 @@ button {
 }
 
 .header_button {
-    color: #387f81
+    color: #000000;
+    background: none;
+    border: none;
+    margin: 0;
+    font-family: 'Nunito Sans';
+    font-size: 14pt;
 }
+.header_button:hover{
+    background-color: #00000008;
+    cursor:pointer;
+}
+
+
+.dropbutton {
+    background-color: #ffffff;
+    padding: 16px;
+    font-family: 'Nunito Sans';
+    font-weight: medium;
+    font-size: 14pt;
+    border: none;
+}
+
+.dropcontent {
+    display: none;
+    min-width: fit-content;
+    position: absolute;
+    background-color: #6EC946;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropcontent Link {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown:hover .dropcontent{display: block;}
+.dropdown:hover .dropbtn {background-color: #3e8e41;}
 
 .footer_style {
     display: flex;
@@ -282,6 +337,7 @@ button {
     display: flex;
     flex-direction: column;
     line-height: 1;
+    justify-content: center;
 }
 
 .logo_title {
@@ -311,15 +367,17 @@ button {
     padding: 30px 30px;
 }
 
-.home_disclaimer {
+.home_disclaimer,
+.register_disclaimer{
     font-weight: 700;
     line-height: 150%;
     padding: 15px;
     text-align: center;
     height: fit-content;
-    background-color: #ee5c5c;
+    background-color: #f6e15a61;
     grid-column: 1/-1;
     grid-row: 1/2;
+    border-radius: 20px;
 }
 
 .home_title {
@@ -372,4 +430,89 @@ button {
 .home_text2 ul {
     margin-bottom: 20px;
     padding-left: 24px;
+}
+
+.profRecap {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: fit-content;
+    justify-content: center;
+    gap: 15px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+
+.cardProf {
+    width: 250px;
+    height: fit-content;
+    border-color: rgb(75, 85, 99, .12);
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    padding: 15px 15px;
+    gap: 5px;
+    font-family: 'Nunito Sans', sans-serif;
+}
+
+.cardProfSummary {
+    display: flex;
+    flex-direction: column;
+}
+
+.cardSummaryAndLogo {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    gap: 10px;
+}
+
+.cardProf h1 {
+    font-weight: 600;
+    font-size: 25px ;
+}
+
+.cardProf p{
+    font-size: 14px;
+    font-weight:500;
+    color: #4B5563;
+}
+
+.graduationLogo {
+    background-color: #6dc9464d ;
+    color: #6EC946;
+    border-radius: 15%;
+}
+
+
+.adminSection {
+    display: grid;
+    gap: 30px;
+    padding: 30px 30px;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+    align-items: baseline;
+}
+
+
+.adminSection > * {
+    min-width: 0; /* allows grid children to shrink below content size */
+    overflow: hidden; /* prevents child content overflow */
+}
+
+.helpSection {
+    font-family: 'Nunito Sans', sans-serif;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 50px;
+    padding: 30px 30px;
+    align-items: start;
+}
+.helpParagraph {
+    gap: 20px;
 }

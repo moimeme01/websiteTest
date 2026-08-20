@@ -87,7 +87,7 @@ def return_auth_users(session: Session = Depends(get_session)):
     print("founded users!")
     return {"users": auth_users}
 
-@router.put("/authorizing", status_code=HTTPStatus.OK)
+@router.put("/authorizing", status_code=HTTPStatus.CREATED)
 def authorizing_users(list_of_users: list[int], session: Session = Depends(get_session)):
     print("Authorization of users: ", list_of_users)
     for element in list_of_users:
@@ -97,6 +97,12 @@ def authorizing_users(list_of_users: list[int], session: Session = Depends(get_s
         dbuser.authorized = True
     session.commit()
     return "Done"
+
+@router.get("/getprofessors", status_code=HTTPStatus.OK, response_model=AdminResponse)
+def get_professors_list(session: Session = Depends(get_session)):
+    print("Looking for professors in the users DB")
+    professors = session.scalars(select(User).where(User.role == "professor")).all()
+    return {"users": professors}
 
 
 @router.get('/me', response_model=UserPublic)

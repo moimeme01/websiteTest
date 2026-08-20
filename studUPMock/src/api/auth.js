@@ -2,7 +2,10 @@ import api, { logoutRequest } from './axios';
 
 export const authService = {
     async register(userData) {
+        console.log("Trying to register data")
+        console.log("Datas are : ", userData)
         const response = await api.post('/auth/register', userData);
+        console.log("Finished Register")
         return response.data;
     },
     
@@ -33,6 +36,12 @@ export const authService = {
     async get_authorized_users() {
         console.log("getting the authorized users");
         const response = await api.get("/users/authorized");
+        return response;
+    },
+
+    async get_prof_list() {
+        console.log("getting the professors list.");
+        const response = await api.get("/users/getprofessors");
         return response;
     },
 

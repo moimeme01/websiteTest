@@ -7,9 +7,12 @@ class GroupPublic(BaseModel):
     name: str
 
 class GroupBase(BaseModel):
+    group_id: int
     professor_id: int
     name: str
     academic_year: int
+    created_at: datetime
+    school: str
     is_active: bool
 
 

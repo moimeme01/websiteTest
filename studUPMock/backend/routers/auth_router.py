@@ -19,6 +19,7 @@ print("Server running on production? ", is_production)
 
 @router.post("/register", status_code=HTTPStatus.CREATED, response_model=UserPublic)
 def register_user(user: UserRegister, session: Session = Depends(get_session)):
+    print("arrived here")
     # Check if the user is already in the database or the email is already linked to an account
     dbuser = session.scalar(
         select(User).where(User.email == user.email)

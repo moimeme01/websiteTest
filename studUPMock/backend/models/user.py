@@ -22,7 +22,7 @@ class User:
 
     role:Mapped[str]
     first_visit: Mapped[bool] = mapped_column(init=False, default=True)
-    classroom_id: Mapped[int] = mapped_column(ForeignKey("groups.group_id"), nullable=False)
+    classroom_id: Mapped[int] = mapped_column(ForeignKey("groups.group_id"), nullable=True)
     school: Mapped[str] = mapped_column(nullable=False)
     professor: Mapped[str]
 

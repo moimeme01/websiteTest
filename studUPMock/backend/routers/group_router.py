@@ -15,6 +15,8 @@ router = APIRouter(prefix="/groups", tags=["Groups"])
 def getGroupName(session: Session = Depends(get_session)):
     print("Searching for groups in the DB")
     groupList = session.scalars(select(Groups).where(Groups.group_id)).all()
+    if groupList:
+        print("Groups found.")
     return {"groups": groupList}
 
 
@@ -34,3 +36,9 @@ def addNewGroup(groupe: GroupRegister, session: Session = Depends(get_session)):
         
 
     return {"message": "Group correctly added"}
+
+@router.get("/myclasses", status_code=HTTPStatus.OK, response_model=GroupAdmin)
+def getMyClasses(id: int, session: Session = Depends(get_session)):
+    print(f"Getting the classes for the professor with id {id}")
+    my_groups = session.scalars(select(Groups).where(Groups.professor_id == id)).all()
+    return {"groups": my_groups}

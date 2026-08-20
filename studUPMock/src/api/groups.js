@@ -21,7 +21,6 @@ export const groupService = {
         console.log("Adding")
         try{
             console.log("trying to put a new group");
-            console.log(group_data);
             const response = await api.post("/groups/newgroup", group_data);
             return response;
         } catch (err) {
@@ -29,5 +28,16 @@ export const groupService = {
         }
     },
 
+    async getMyClassrooms(id){
+        try{
+            console.log("Getting the professor classroms for id:", id);
+            const response = await api.get("/groups/myclasses", {
+                params: {id: Number(id)}
+            });
+            return response;
+        } catch (err) {
+            console.log("Error getting my classes", err.response?.data);
+        }
+    }
 }
 

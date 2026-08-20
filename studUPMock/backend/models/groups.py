@@ -16,6 +16,8 @@ class Groups ():
     name: Mapped[str] = mapped_column(nullable=False, unique=False)
     academic_year: Mapped[int] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now(), init=False)
+    school: Mapped[str] = mapped_column(nullable=True, default="no school")
     is_active: Mapped[bool] = mapped_column(nullable=False, default=True)
+    
 
     student: Mapped[list["User"]] = relationship(foreign_keys="User.classroom_id", back_populates="classroom", init=False, default_factory=list)
