@@ -1,9 +1,12 @@
 import { useEffect,useState } from "react";
 import axios from "../api/axios";
+import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { authService } from "../api/auth";
 import { groupService } from "../api/groups";
 import { useAuth } from "../context/AuthContext";
-
+const FIRSTNAME_REGEX = /^[A-Z][a-z]{2,19}$/;
+const LASTNAME_REGEX = /^[A-Z][a-z]{2,19}$/;
 
 function RequestTables ({unAuthUsers, selectedUsers, setSelectedUsers}){
     return (
@@ -66,7 +69,6 @@ function RequestTables ({unAuthUsers, selectedUsers, setSelectedUsers}){
     </>
     );
 }
-
 
 
 
@@ -353,7 +355,6 @@ const AdminPage = () => {
                     <button> Add the group </button>
                 </form>
             </div>
-            
 
         </section>
         </>

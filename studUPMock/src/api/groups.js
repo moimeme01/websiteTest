@@ -38,6 +38,33 @@ export const groupService = {
         } catch (err) {
             console.log("Error getting my classes", err.response?.data);
         }
-    }
+    },
+
+    async getClassroomStudents(groupID){
+        try {
+            console.log("Getting the students of the classroom with ID: ", groupID)
+            const response = await api.get("/groups/classStudents", { 
+                params: {groupID: Number(groupID)}
+            });
+            return response;
+        } catch (err) {
+            console.log(err)
+            return err.response?.data;
+        }
+    },
+
+    async getClassroomInfo(groupID){
+        try {
+            console.log("Getting the infos of the classroom with ID: ", groupID)
+            const response = await api.get("/groups/classInfo", { 
+                params: {groupID: Number(groupID)}
+            });
+            
+            return response;
+        } catch (err) {
+            console.log(err)
+            return err.response?.data;
+        }
+    },
 }
 

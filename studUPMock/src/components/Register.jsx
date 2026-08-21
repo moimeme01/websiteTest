@@ -383,8 +383,7 @@ const Register = () => {
                             </div>
                         </fieldset>
 
-                        
-                        <fieldset className="form-section" style={{display: 'none'}}>
+                        <fieldset className="form-section">
                             <legend> Informations complémentaires </legend>
                             <div className="form-field">
                                 <label htmlFor="class-select">
@@ -398,9 +397,9 @@ const Register = () => {
                                     onChange={(e) => setClassroom(e.target.value)}
                                     >
                                     <option value=""> -- Choisissez une classe -- </option>
-                                    {groupList.groups.map(groups => {
-                                        <option key={groups.group_id} value={groups.group_id}> {groups.name} </option>
-                                    })}
+                                    { groupList.groups && groupList.groups.length > 0 ? (groupList.groups.map(e =>
+                                        <option key={e.group_id} value={e.group_id}> {e.name} </option>
+                                    )): null}
                                 </select>
                             </div>
                             <div className="form-field">

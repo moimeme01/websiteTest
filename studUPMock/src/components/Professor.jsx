@@ -1,8 +1,8 @@
 import { groupService } from "../api/groups";
 import { useEffect, useState } from "react";
 import { authService } from "../api/auth";
-import { Link } from "react-router-dom";
-import { GraduationCap } from 'lucide-react';
+import { Link, useNavigate } from "react-router-dom";
+import { GraduationCap, UsersRound, Users, Trophy, FileText, Calendar1, ChartLine} from 'lucide-react';
 
 function ProfHeader( { me, myClasses } ) {
     return (
@@ -16,7 +16,7 @@ function ProfHeader( { me, myClasses } ) {
                         <p> classes actives</p>
                     </div>
                 </div>
-                <Link to="/"> Voir mes classes </Link>
+                <Link to="" target="_blank"> Voir mes classes </Link>
                 
             </div>
             <div className="cardProf">
@@ -27,7 +27,7 @@ function ProfHeader( { me, myClasses } ) {
                         <p> tests créés</p>
                     </div>
                 </div>
-                <Link to="/"> Voir mes tests </Link>
+                <Link to=""> Voir mes tests </Link>
                 
             </div>
             <div className="cardProf">
@@ -55,6 +55,78 @@ function ProfHeader( { me, myClasses } ) {
         </div>
         </>
     );
+}
+
+function ClassRecap ({ oneClass }) {
+    const  navigate  = useNavigate();
+    return (<>
+        <div className="recapClassCard">
+            <div className="line1">
+                <div className="recapClassCardLogo" style={{
+                    backgroundColor: oneClass.is_active ? "#6EC94633" : "#FF000033",
+                    color: oneClass.is_active ? "#6EC946" : "#FF0000", 
+                    }}>
+                    <UsersRound size={45}/>
+                </div>
+                <div className="title">
+                    <p className="title_className">{oneClass.name}</p>
+                    <h3>{oneClass.is_active ? "Active" : "Pas active"}</h3>
+                </div>
+            </div>
+            <div className="line2">
+                <div className="line1">
+                    <div className="recapClassCardLogo">
+                        <Trophy size={35}/>
+                    </div>
+                    <div className="title">
+                        <h4>80%</h4>
+                        <p>Moyenne</p>
+                    </div>
+                </div>
+                <div className="line1">
+                    <div className="recapClassCardLogo">
+                        <Users size={35}/>
+                    </div>
+                    <div className="title">
+                        <p className="title_classText">10</p>
+                        <p>Elèves</p>
+                    </div>
+                </div>
+                <div className="line1">
+                    <div className="recapClassCardLogo">
+                        <FileText size={35} strokeWidth={1.5}/>
+                    </div>
+                    <div className="title">
+                        <p className="title_classText">3</p>
+                        <p>Tests</p>
+                    </div>
+                </div>
+            </div>
+            <div className="line2">
+                <div className="line1">
+                    <div className="recapClassCardLogo">
+                        <Calendar1 size={35}/>
+                    </div>
+                    <div className="title">
+                        <h4>Dernier test: Pythagore</h4>
+                        <p>12/04/2026</p>
+                    </div>
+                </div>
+                <div className="scoreRecap">
+                    <ChartLine size={30} style={{color: "#FFAA00c6"}}/>
+                    <h2>12/20</h2>
+                </div>
+            </div>
+            <div className="buttonLine">
+                <button className="button1">
+                    <Users/> <p>Voir les élèves</p>
+                </button>
+                <button className="button2" onClick={() => navigate(`myclass/${oneClass.group_id}`)}>
+                    <UsersRound/> <p>Voir la classe</p>
+                </button>
+            </div>
+        </div>
+    </>)
 }
 
 
@@ -97,39 +169,19 @@ const Professor = () => {
 
     return (
         <>
-        <section>
+        <section className="ProfSection">
             <h1>
                 Bonjour {me ? me.lastName : null}. 
             </h1>
-
             <ProfHeader me={me} myClasses={myClasses}/>
-            
-            <div>
-                <table className="adminTable">
-                    <thead>
-                        <tr>
-                            <th scope="col"> # </th>
-                            <th scope="col"> Nom de la classe </th>
-                            <th scope="col"> Ecole </th>
-                            <th scope="col"> Active </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        { myClasses.groups.at(0) == null ? (
-                            <td colSpan={3}> You have no classes </td>  
-                        ) : (
-                            myClasses.groups.map( (group, i) => (
-                            <tr key={group.id} style={{backgroundColor: group.is_active ? "#a4f9a1" : "#f9a1a1"}}>
-                                <td> {i+1} </td>
-                                <td> {group.name} </td>
-                                <td> {group.school} </td>
-                                <td> {group.is_active ? "Oui" : "Non" } </td>
-                            </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+            <h1> Mes Classes</h1>
+            <div className="RecapMyClasses">    
+                {myClasses.groups.map((group, i) => (
+                    <ClassRecap oneClass={group}/>
+                ))}
             </div>
+            
+            
                 
         </section>
         </>

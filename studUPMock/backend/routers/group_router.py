@@ -4,7 +4,8 @@ from sqlalchemy.orm import Session
 from http import HTTPStatus
 from typing import Optional
 
-from schemas.groups import GroupAdmin, GroupBase, GroupRegister
+from schemas.user import AdminResponse
+from schemas.groups import GroupAdmin, GroupRegister, GroupBase
 from models.groups import Groups
 from database import get_session
 
@@ -42,3 +43,16 @@ def getMyClasses(id: int, session: Session = Depends(get_session)):
     print(f"Getting the classes for the professor with id {id}")
     my_groups = session.scalars(select(Groups).where(Groups.professor_id == id)).all()
     return {"groups": my_groups}
+
+@router.get("/classStudents", status_code=HTTPStatus.OK, response_model=AdminResponse)
+def getClassStudents(groupID:int, session: Session = Depends(get_session)):
+    print("getting the students for the classroom with id: ", groupID)
+    classroom = session.scalar(select(Groups).where(Groups.group_id == groupID))
+    return {"users": classroom.student}
+
+@router.get("/classInfo", status_code=HTTPStatus.OK, response_model=GroupBase)
+def getClassStudents(groupID:int, session: Session = Depends(get_session)):
+    print("getting the informations for the classroom with id: ", groupID)
+    group = session.scalar(select(Groups).where(Groups.group_id == groupID))
+    print(group)
+    return group

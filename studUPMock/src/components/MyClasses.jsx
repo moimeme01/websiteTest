@@ -1,18 +1,41 @@
 import { useState, useEffect } from "react";
 import { groupService } from "../api/groups";
+import { authService } from "../api/auth";
 
-function MesClasses(){
+const MesClasses = () => {
+    const [ me, setMe] = useState(null);
     const [ myClasses, setMyClasses ] = useState({groups: []});
     const [ err, setErr ] = useState(null);
 
     useEffect(() => {
+        fetchMe();
+    }, []);
+
+    useEffect(() => {
+        fetchMyClasses(me)
+    }, [me]);
+
+    async function fetchMe(){
         try {
-            const response = groupService.getMyClassrooms();
+            console.log("Getting my ID in classes")
+            const response = await authService.get_profile();
+            setMe(response);
+        } catch (err) {
+            console.log("Erron in getting me, my classes: ", err)
+            setErr(err.response?.data?.message);
+        }
+    }
+
+    async function fetchMyClasses(me){
+        try {
+            console.log("Getting my classes in myclasses")
+            const response = await groupService.getMyClassrooms(me.id);
             setMyClasses(response.data);
         } catch (err) {
-            setErr(err);
+            console.log("Erron in getting me, my classes: ", err)
+            setErr(err.response?.data?.message);
         }
-    }, []);
+    }
     
     return (
         <>

@@ -1,5 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 
 
@@ -516,3 +516,160 @@ button {
 .helpParagraph {
     gap: 20px;
 }
+
+.ProfSection {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: flex-start;
+    padding: 30px;
+
+}
+
+.RecapMyClasses {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    width: 100%;
+    padding: 25px 15px;
+    gap: 15px;
+}
+
+
+.recapClassCard {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Nunito Sans', sans-serif;
+    width: 400px;
+    height: fit-content;
+    border-color: #4B55631F;
+    border-style: solid;
+    border-radius: 20px;
+    padding: 15px 15px;
+    gap: 10px;
+}
+
+.recapClassCard p{
+    font-size: 10px;
+    font-weight: 400;
+}
+
+
+.recapClassCard .line1 {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.recapClassCard .line2 {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content:space-between;
+}
+
+.recapClassCard .title {
+    display: flex;
+    flex-direction: column;
+}
+
+.recapClassCardLogo {
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    padding: 5px 5px;
+}
+
+.recapClassCard .title_className {
+    font-family: 'Fraunces', 'serif';
+    font-size: 24px;
+    font-weight: 600;    
+}
+.recapClassCard .scoreRecap {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    border-color: #FFAA0033;
+    background-color: #FFAA0033;
+    border-style: solid;
+    border-radius: 10px;
+}
+
+.recapClassCard .scoreRecap h2 {
+    color: #FFAA00c6;
+}
+
+
+.recapClassCard .title_classText {
+    font-family: 'Nunito Sans', 'serif';
+    font-size: 15px;
+    font-weight: 600;    
+}
+
+.recapClassCard .buttonLine {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.recapClassCard .buttonLine .button1 {
+    background-color: #FFFFFF;
+    border-color: #387F81;
+    border-style: solid;
+    border-radius: 5px;
+    color: #387F81;
+    padding: 7px 7px;
+    gap: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+}
+
+.recapClassCard .buttonLine .button2 {
+    background-color: #387F81;
+    border-color: #387F81;
+    border-style: solid;
+    border-radius: 5px;
+    color: #FFFFFF;
+    padding: 7px 7px;
+    gap: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+}
+
+.recapClassCard .buttonLine .button1 p{
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.recapClassCard .buttonLine .button2 p{
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.recapClassCard .buttonLine .button2:hover, .button1:hover {
+    cursor: pointer;
+
+}
+
+
+.ClassroomHeader .StatBox {
+    font-family: 'Fraunces', 'serif';
+    font-weight: 700;
+    font-size: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 14px;
+    border: 2px solid #E5E7EB;
+    padding: 5px 5px;
+}
+
