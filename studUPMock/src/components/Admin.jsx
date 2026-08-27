@@ -321,8 +321,8 @@ function TableGroups({groupList, editGroupId, handleEditGroupRow, editedGroup, s
                             <td className="action">
                                     <div className="action_cell">
                                         <div className={`actionIcons ${edit === group.group_id ? "open" : ""}`}>
-                                            <a key={group.group_id+1} className="action_btn" onClick={() => handleEditUserRow(group.group_id)}> <Pencil size={25} strokeWidth={1.5}/> </a>
-                                            <a key={group.group_id+2} className="action_btn" onClick={() => handleDeleteUser(group.group_id)}> <Trash size={25} strokeWidth={1.5} /> </a>
+                                            <a key={group.group_id+1} className="action_btn" onClick={() => handleEditGroupRow(group.group_id)}> <Pencil size={25} strokeWidth={1.5}/> </a>
+                                            <a key={group.group_id+2} className="action_btn" onClick={() => handleDeleteGroup(group.group_id)}> <Trash size={25} strokeWidth={1.5} /> </a>
                                         </div>
                                         <span key={group.group_id+3} className="ellipsis" onClick={() => setEdit(prev => (prev === group.group_id ? null : group.group_id))}> <EllipsisVertical size={25} strokeWidth={1.5} /> </span>
                                     </div>
