@@ -453,7 +453,6 @@ const AdminPage = () => {
             console.log("fetching the groups")
             const groups = await groupService.getGroupList();
             setGroupsList(groups.data);
-            console.log("Here are the groups: ", groups.data?.groups?.find(u => u.group_id === 17).name);
         } catch (err) {
             console.log("there was an error while checking the group list: ", err)
             if (err) {
