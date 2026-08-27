@@ -56,3 +56,14 @@ def getClassStudents(groupID:int, session: Session = Depends(get_session)):
     group = session.scalar(select(Groups).where(Groups.group_id == groupID))
     print(group)
     return group
+
+
+@router.put("/update", status_code=HTTPStatus.CREATED)
+def update_group(group: dict, session: Session = Depends(get_session)):
+    print("Updating group...")
+    id = list(group.keys())[0]
+    db_user = session.scalar(select(Groups).where(Groups.group_id == int(id)))
+    for (key, value) in group[id].items():
+        setattr(db_user, key, value)
+    session.commit()
+    return {"message": "Group updated"}

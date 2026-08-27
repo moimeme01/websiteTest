@@ -98,6 +98,16 @@ def authorizing_users(list_of_users: list[int], session: Session = Depends(get_s
     session.commit()
     return "Done"
 
+@router.put("/update", status_code=HTTPStatus.CREATED)
+def update_user(user: dict, session: Session = Depends(get_session)):
+    print("Updating user...")
+    id = list(user.keys())[0]
+    db_user = session.scalar(select(User).where(User.id == int(id)))
+    for (key, value) in user[id].items():
+        setattr(db_user, key, value)
+    session.commit()
+    return {"message": "User updated"}
+
 @router.get("/getprofessors", status_code=HTTPStatus.OK, response_model=AdminResponse)
 def get_professors_list(session: Session = Depends(get_session)):
     print("Looking for professors in the users DB")

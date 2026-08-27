@@ -50,6 +50,13 @@ export const authService = {
         return response;
     },
 
+    async update_user(updatedUser) {
+        console.log("given input: ", updatedUser);
+        const response = await api.put("/users/update", updatedUser);
+        console.log(response)
+        return response;
+    },
+
     async refresh() {
         console.log("requesting to auth refresh")
         const response = await api.post('/auth/refresh', null, { skipAuthRefresh: true, });

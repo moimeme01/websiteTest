@@ -1,6 +1,9 @@
 from pydantic import BaseModel, EmailStr
-from typing import List
+from typing import List, Optional, TYPE_CHECKING
 from datetime import datetime
+
+if TYPE_CHECKING:
+    from .groups import GroupBase
 
 class UserSchema(BaseModel):
     username: str

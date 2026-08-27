@@ -1,6 +1,10 @@
-from pydantic import BaseModel
-from typing import List
+from pydantic import BaseModel, EmailStr
+from typing import List, Optional, TYPE_CHECKING
 from datetime import datetime
+
+if TYPE_CHECKING:
+    from .user import UserPublic
+
 
 class GroupPublic(BaseModel): 
     id: int
@@ -14,6 +18,7 @@ class GroupBase(BaseModel):
     created_at: datetime
     school: str
     is_active: bool
+    student: List["UserPublic"] | None
 
 
 class GroupRegister(BaseModel):

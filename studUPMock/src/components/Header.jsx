@@ -49,7 +49,7 @@ function Header () {
         <header className="header_style">
             <div className="logo">
                 <Link className="logo_title" to="/home" hidden={isAuthenticated}> StudUP </Link>
-                <Link className="logo_title" to="/home" hidden={!isAdminConnected}> Admin </Link>
+                <Link className="logo_title" to="/admin" hidden={!isAdminConnected}> Admin </Link>
                 <Link className="logo_title" to="/professor" hidden={!isProfessorConnected}> Professor </Link>
             </div>
             <div className="header_box_right">
