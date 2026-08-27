@@ -205,7 +205,7 @@ function AuthorizedTable ({authUsers, editUserId, handleDeleteUser, handleEditUs
                                         )): (<option value="noprof"> There is no group available</option>) 
                                         }
                                     </select>
-                                    : (user.role == "professor" ? groupList.groups.filter(e => e.professor_id === user.id).length : groupList.groups?.find(u => u.group_id === user.classroom_id)?.name)}
+                                    : (user.role == "professor" ? (groupList?.groups ?? []).filter(e => e.professor_id === user.id)?.length : (groupList?.groups ?? []).find(u => u.group_id === user.classroom_id)?.name ?? "-")}
                                 </td>
                                 <td>{editUserId == user.id ? <select value={editedUser[user.id]?.school ?? user.school} onChange={
                                     (e) => setEditedUser( old => ({
@@ -466,7 +466,6 @@ const AdminPage = () => {
             console.log("Fetching professor list");
             const result = await authService.get_prof_list();
             setProfList(result.data);
-            console.log("Here are the professors: ", result.data?.users?.find(u => u.id === 1).firstName);
         } catch (err) {
 
             setError(err);
