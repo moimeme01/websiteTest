@@ -76,8 +76,20 @@ export const groupService = {
             console.log("Error updating a group: ", err);
             return err;
         }
-    }
+    }, 
 
+    async delete_group(id){
+        try{
+            console.log("trying to delete the group (group API) ... ", id)
+            const response = await api.delete("/groups/delete", {
+                params: {id: Number(id)}
+            });
+            return response.data?.message;
+        } catch (err) {
+            console.log("There was an error while deleting the account: ", err);
+            return err.response?.data;
+        }
+    },
 
 
 }

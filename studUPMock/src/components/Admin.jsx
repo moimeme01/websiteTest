@@ -66,7 +66,7 @@ function RequestTables ({unAuthUsers, selectedUsers, setSelectedUsers}){
                     <th scope="col" {...onHeaderClick("role")}> role {sortColumn == "role" ? <ArrowDownNarrowWide className="sortLogo" size={11}/> : null} </th>
                     <th scope="col" {...onHeaderClick("classroom")}> classroom {sortColumn == "classroom" ? <ArrowDownNarrowWide className="sortLogo" size={11}/> : null} </th>
                     <th scope="col" {...onHeaderClick("school")}> school {sortColumn == "school" ? <ArrowDownNarrowWide className="sortLogo" size={11}/> : null} </th>
-                    <th scope="col" {...onHeaderClick("professor")}> professor {sortColumn == "professor" ? <ArrowDownNarrowWide className="sortLogo" size={11}/> : null} </th>
+                    <th scope="col" {...onHeaderClick("professor_id")}> professor {sortColumn == "professor_id" ? <ArrowDownNarrowWide className="sortLogo" size={11}/> : null} </th>
                     <th scope="col" >Authorize</th>
                     <th scope="col"> </th>
                 </tr>
@@ -89,7 +89,7 @@ function RequestTables ({unAuthUsers, selectedUsers, setSelectedUsers}){
                             <td>{user.role}</td>
                             <td>{user.classroom}</td>
                             <td>{user.school}</td>
-                            <td>{user.professor}</td>
+                            <td>{user.professor_id}</td>
                             <td> 
                                 <input 
                                     type="checkbox" 
@@ -123,7 +123,7 @@ function RequestTables ({unAuthUsers, selectedUsers, setSelectedUsers}){
   
 
 
-function AuthorizedTable ({authUsers, editUserId, handleDeleteUser, handleEditUserRow, editedUser, setEditedUser, groupList, profList}) {
+function AuthorizedTable ({authUsers, editUserId, handleDeleteId, handleEditUserRow, editedUser, setEditedUser, groupList, profList}) {
     const [sortColumn, setSortColumn] = useState();
     const [edit, setEdit] = useState(null);
 
@@ -154,7 +154,7 @@ function AuthorizedTable ({authUsers, editUserId, handleDeleteUser, handleEditUs
                         <th scope="col" {...onHeaderClick("role")}> role {sortColumn == "role" ? <ArrowDownNarrowWide className="sortLogo" size={11}/> : null} </th>
                         <th scope="col" {...onHeaderClick("classroom")}> classroom {sortColumn == "classroom" ? <ArrowDownNarrowWide className="sortLogo" size={11}/> : null} </th>
                         <th scope="col" {...onHeaderClick("school")}> school {sortColumn == "school" ? <ArrowDownNarrowWide className="sortLogo" size={11}/> : null} </th>
-                        <th scope="col" {...onHeaderClick("professor")}> professor {sortColumn == "professor" ? <ArrowDownNarrowWide className="sortLogo" size={11}/> : null} </th>
+                        <th scope="col" {...onHeaderClick("professor_id")}> professor {sortColumn == "professor_id" ? <ArrowDownNarrowWide className="sortLogo" size={11}/> : null} </th>
                         <th scope="col"> </th>
 
                     </tr>
@@ -195,7 +195,8 @@ function AuthorizedTable ({authUsers, editUserId, handleDeleteUser, handleEditUs
                                         ...old, [user.id]:{ ...old[user.id], role: e.target.value}
                                     }))}/> : user.role}
                                 </td>
-                                <td>{editUserId == user.id ? <select value={editedUser[user.id]?.classroom_id ?? user.classroom_id} onChange={
+                                <td>{user.role == "professor" ? (groupList?.groups ?? []).filter(e => e.professor_id === user.id)?.length : 
+                                (editUserId == user.id ? <select value={editedUser[user.id]?.classroom_id ?? user.classroom_id} onChange={
                                     (e) => setEditedUser( old => ({
                                         ...old, [user.id]:{ ...old[user.id], classroom_id: e.target.value}
                                     }))}>
@@ -205,7 +206,7 @@ function AuthorizedTable ({authUsers, editUserId, handleDeleteUser, handleEditUs
                                         )): (<option value="noprof"> There is no group available</option>) 
                                         }
                                     </select>
-                                    : (user.role == "professor" ? (groupList?.groups ?? []).filter(e => e.professor_id === user.id)?.length : (groupList?.groups ?? []).find(u => u.group_id === user.classroom_id)?.name ?? "-")}
+                                 : (groupList?.groups ?? []).find(u => u.group_id === user.classroom_id)?.name ?? "-")}
                                 </td>
                                 <td>{editUserId == user.id ? <select value={editedUser[user.id]?.school ?? user.school} onChange={
                                     (e) => setEditedUser( old => ({
@@ -216,22 +217,28 @@ function AuthorizedTable ({authUsers, editUserId, handleDeleteUser, handleEditUs
                                     </select>
                                     : user.school}
                                 </td>
-                                <td>{editUserId == user.id ? <select value={editedUser[user.id]?.professor ?? user.professor} onChange={
+                                <td>{user.role == "professor" || user.role == "admin" ? "-" : 
+                                (editUserId == user.id ? <select value={editedUser[user.id]?.professor_id ?? user.professor_id} onChange={
                                     (e) => setEditedUser( old => ({
-                                        ...old, [user.id]:{ ...old[user.id], professor: e.target.value}
+                                        ...old, [user.id]:{ ...old[user.id], professor_id: e.target.value}
                                     }))}>
+                                        <option value=""> -- Select a professor -- </option>
                                         { profList && profList.users.length > 0 ? (profList.users.map(
-                                            e => <option key={e.id} value={String(e.id)}> {e.lastName}</option>
-                                        )): (<option value="noprof"> There is no professor available</option>) 
+                                            e => <option key={e.id} value={Number(e.id)}> {e.lastName}</option>
+                                        )): (null) 
                                         }
                                     </select>
-                                    : user.professor}
+                                    : (profList?.users ?? []).find(u => u.id === Number(user.professor_id))?.lastName)} 
                                 </td>
                                 <td className="action">
                                     <div className="action_cell">
                                         <div className={`actionIcons ${edit === user.id ? "open" : ""}`}>
                                             <a key={user.id+1} className="action_btn" onClick={() => handleEditUserRow(user.id)}> <Pencil size={25} strokeWidth={1.5}/> </a>
-                                            <a key={user.id+2} className="action_btn" onClick={() => handleDeleteUser(user.id)}> <Trash size={25} strokeWidth={1.5} /> </a>
+                                            <a key={user.id+2} className="action_btn" onClick={(e) => {
+                                                const confirmBox = window.confirm("Do you really want to delete the user?") 
+                                                if (confirmBox === true ){
+                                                    handleDeleteId(e, "user", user.id)
+                                                } else {console.log("Abort delete")}}}> <Trash size={25} strokeWidth={1.5} /> </a>
                                         </div>
                                         <span key={user.id+3} className="ellipsis" onClick={() => setEdit(prev => (prev === user.id ? null : user.id))}> <EllipsisVertical size={25} strokeWidth={1.5} /> </span>
                                     </div>
@@ -249,7 +256,7 @@ function AuthorizedTable ({authUsers, editUserId, handleDeleteUser, handleEditUs
 
 
 
-function TableGroups({groupList, editGroupId, handleEditGroupRow, editedGroup, setEditGroupID, setEditedGroup, profList}) {
+function TableGroups({groupList, editGroupId, handleEditGroupRow, handleDeleteId, editedGroup, setEditGroupID, setEditedGroup, profList}) {
 
     const [sortColumn, setSortColumn] = useState();
     const [edit, setEdit] = useState(null);
@@ -264,9 +271,12 @@ function TableGroups({groupList, editGroupId, handleEditGroupRow, editedGroup, s
             console.log(`clicked on ${column}`)
             sortRule(groupList, "groups", column)
             setSortColumn(column)
-            // do something
             },
         });    
+
+
+    
+
 
     return(
         <table className="adminTable">
@@ -274,10 +284,11 @@ function TableGroups({groupList, editGroupId, handleEditGroupRow, editedGroup, s
                 <tr>
                     <th scope="col"> # </th>
                     <th scope="col" {...onHeaderClick("group_id")}>group id {sortColumn == "group_id" ? <ArrowDownNarrowWide size={11}/> : null}</th>
-                    <th scope="col" {...onHeaderClick("professor_id")}>professor id {sortColumn == "professor_id" ? <ArrowDownNarrowWide size={11}/> : null}</th>
+                    <th scope="col" {...onHeaderClick("professor_id")}>professor {sortColumn == "professor_id" ? <ArrowDownNarrowWide size={11}/> : null}</th>
                     <th scope="col" {...onHeaderClick("name")}>name {sortColumn == "name" ? <ArrowDownNarrowWide size={11}/> : null}</th>
                     <th scope="col" {...onHeaderClick("academic_year")}>academic year {sortColumn == "academic_year" ? <ArrowDownNarrowWide size={11}/> : null}</th>
                     <th scope="col" {...onHeaderClick("created_at")}>created at {sortColumn == "created_at" ? <ArrowDownNarrowWide size={11}/> : null}</th>
+                    <th scope="col" {...onHeaderClick("school")}> school {sortColumn == "created_at" ? <ArrowDownNarrowWide size={11}/> : null}</th>
                     <th scope="col" {...onHeaderClick("is_active")}>is active {sortColumn == "is_active" ? <ArrowDownNarrowWide size={11}/> : null}</th>
                     <th scope="col" {...onHeaderClick("nbr_students")}> # students {sortColumn == "nbr_students" ? <ArrowDownNarrowWide size={11}/> : null}</th>
                     <th scope="col"> </th>
@@ -295,7 +306,7 @@ function TableGroups({groupList, editGroupId, handleEditGroupRow, editedGroup, s
                         <tr key={group.group_id} style={{backgroundColor: group.is_active ? "#a4f9a1" : "#f9a1a1"}}>
                             <td>{i}</td>
                             <td>{group.group_id}</td>
-                            <td>{editGroupId == group.group_id ? <select value={editedGroup[group.group_id]?.professor_id ?? group.professor_id} onChange={
+                            <td>{editGroupId == group.group_id ? <select value={editedGroup[group.group_id]?.professor_id ?? group.professor_id_id} onChange={
                                 (e) => setEditedGroup( old => ({
                                     ...old, [group.group_id]:{ ...old[group.group_id], professor_id: e.target.value}
                                 }))}> 
@@ -316,13 +327,28 @@ function TableGroups({groupList, editGroupId, handleEditGroupRow, editedGroup, s
                                 /> : group.academic_year}
                             </td>
                             <td>{group.created_at}</td>
-                            <td>{group.is_active ? "active" : "inactive"}</td>
-                            <td>{group.student?.length}</td>
+                            <td>{ editGroupId === group.group_id ? <input value={editedGroup[group.group_id]?.school ?? group.school} onChange={
+                                (e) => setEditedGroup( old => ({...old, [group.group_id]:{...old[group.group_id], school: e.target.value}}))}
+                                /> : group.school}
+                            </td>
+                            <td>{ editGroupId === group.group_id ? <select value={editedGroup[group.group_id]?.is_active ?? group.is_active} onChange={
+                                (e) => setEditedGroup(old => ({...old, [group.group_id]:{...old[group.group_id], is_active: e.target.value}}))}>
+                                    <option value=""> -- </option>
+                                    <option key={group.group_id+1} value={"activate"}> activate </option>
+                                    <option key={group.group_id+2} value={"deactivate"}> deactivate</option>
+                            </select>
+                            : group.is_active ? "active" : "inactive"}</td>
+                            
+                            <td>{Number(group.student?.length)}</td>
                             <td className="action">
                                     <div className="action_cell">
                                         <div className={`actionIcons ${edit === group.group_id ? "open" : ""}`}>
                                             <a key={group.group_id+1} className="action_btn" onClick={() => handleEditGroupRow(group.group_id)}> <Pencil size={25} strokeWidth={1.5}/> </a>
-                                            <a key={group.group_id+2} className="action_btn" onClick={() => handleDeleteGroup(group.group_id)}> <Trash size={25} strokeWidth={1.5} /> </a>
+                                            <a key={group.group_id+2} className="action_btn" onClick={(e) => {
+                                                const confirmBox = window.confirm("Do you really want to delete the group?") 
+                                                if (confirmBox === true ){
+                                                    handleDeleteId(e, "groups", group.group_id)
+                                                } else {console.log("Abort delete")}}}> <Trash size={25} strokeWidth={1.5} /> </a>
                                         </div>
                                         <span key={group.group_id+3} className="ellipsis" onClick={() => setEdit(prev => (prev === group.group_id ? null : group.group_id))}> <EllipsisVertical size={25} strokeWidth={1.5} /> </span>
                                     </div>
@@ -338,12 +364,12 @@ function TableGroups({groupList, editGroupId, handleEditGroupRow, editedGroup, s
 
 function GroupForm( { handleAddGroup, setGroupActivity, groupName, setGroupName, groupProfessorId, setGroupProfessorId,setGroupAcademicYear, profList, groupActivity}){
     return (
-        <form onSubmit={handleAddGroup}>
+        <form className="register-form" onSubmit={handleAddGroup}>
             <h1>
                 Add a new group
             </h1>
-            <fieldset>
-                <div className="form-type">
+            <fieldset className="form-section">
+                <div className="form-field">
                     <label> Nom </label>
                     <input
                         type="text"
@@ -353,7 +379,7 @@ function GroupForm( { handleAddGroup, setGroupActivity, groupName, setGroupName,
                         value={groupName}
                     />
                 </div>
-                <div className="form-type">
+                <div className="form-field">
                     <label> Année académique </label>
                     <input
                         type="number"
@@ -363,7 +389,7 @@ function GroupForm( { handleAddGroup, setGroupActivity, groupName, setGroupName,
                         onChange={(e) => setGroupAcademicYear(e.target.value)}
                     />
                 </div>
-                <div className="form-type">
+                <div className="form-field">
                     <label> Professeur </label>
                     <select name="profname" value={String(groupProfessorId)} onChange={(e) => setGroupProfessorId(e.target.value)}>
                         <option value=""> -- Select the prof name --</option>
@@ -373,7 +399,7 @@ function GroupForm( { handleAddGroup, setGroupActivity, groupName, setGroupName,
                         }
                     </select>
                 </div>
-                <div className="form-type">
+                <div className="form-field">
                     <label> Actif </label>
                     <input
                         id="isActive"
@@ -526,6 +552,24 @@ const AdminPage = () => {
         return true;
     }
 
+    const handleDeleteId = async(e, type, id) => {
+        if (type === "groups") {
+            console.log("trying to cancel group ", id);
+            const response = await groupService.delete_group(id);
+            console.log(response);
+            fetchGroups();
+        } else if (type === "user") {
+            console.log("trying to cancel user ", id);
+            const response = await authService.delete_user(id);
+            console.log(response);
+            fetchAuthUsers();
+            fetchRequests();
+            fetchProfessors();
+        }
+        
+    }
+    // <AddStudents group={"group"} onAdd={() => fetchStudents("groupID")} />
+
     const handleSaveEdits = async (e, table) => {
         e.preventDefault();
         if( table == "users") {
@@ -558,15 +602,6 @@ const AdminPage = () => {
         }
     }
 
-    const handleDeleteId = async(e, type, id) => {
-        if (type === "user") {
-            console.log("trying to cancel a user.");
-
-        }
-        return true;
-    }
-
-
 
 
     return (
@@ -588,7 +623,7 @@ const AdminPage = () => {
                 <h1> Account authorized </h1>
                 <p ref={errRef} className={error ? "errmsg" : "offscreen"} aria-live="assertive"> {error} </p>
                 <div className="table-container">
-                    <AuthorizedTable authUsers={authUsers} editUserId={editUserId} handleEditUserRow={handleEditUserRow} editedUser={editedUser} setEditedUser={setEditedUser} groupList={groupList} profList={profList}/>
+                    <AuthorizedTable authUsers={authUsers} editUserId={editUserId} handleEditUserRow={handleEditUserRow} handleDeleteId={handleDeleteId} editedUser={editedUser} setEditedUser={setEditedUser} groupList={groupList} profList={profList}/>
                 </div>
                 <button onClick={(e) => handleSaveEdits(e, "users")} hidden={editUserId==null}> save edits </button>
             </div>
@@ -597,10 +632,14 @@ const AdminPage = () => {
                 <GroupForm handleAddGroup={handleAddGroup} setGroupActivity={setGroupActivity} setGroupAcademicYear={setGroupAcademicYear} groupName={groupName} setGroupName={setGroupName} groupProfessorId={groupProfessorId} setGroupProfessorId={setGroupProfessorId} profList={profList} groupActivity={groupActivity}/>
             </div>
             <div>
+                <p ref={errRef} className={error ? "errmsg" : "offscreen"} aria-live="assertive"> {error} </p>
+                
+            </div>
+            <div>
                 <h1> Groups: </h1>
                 <p ref={errRef} className={error ? "errmsg" : "offscreen"} aria-live="assertive"> {error} </p>
                 <div className="table-container">
-                    <TableGroups groupList={groupList} editGroupId={editGroupId} handleEditGroupRow={handleEditGroupRow} editedGroup={editedGroup} setEditGroupID={setEditGroupID} setEditedGroup={setEditedGroup} profList={profList} />
+                    <TableGroups groupList={groupList} editGroupId={editGroupId} handleEditGroupRow={handleEditGroupRow} handleDeleteId={handleDeleteId} editedGroup={editedGroup} setEditGroupID={setEditGroupID} setEditedGroup={setEditedGroup} profList={profList} />
                 </div>
                 <button onClick={(e) => handleSaveEdits(e, "groups")} hidden={editGroupId==null}> save edits </button>
             </div>

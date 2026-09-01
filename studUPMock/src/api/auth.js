@@ -65,6 +65,38 @@ export const authService = {
         return response.data;
     },
 
+    async delete_user(id) {
+        try {
+            console.log("Trying to delete user (API auth) ... ", id);
+            const response = await api.delete("/users/delete", {
+                params: {id: Number(id)}
+            });
+            return response.message;
+        } catch (err) {
+            console.log("There was an error deleting the user. ", err)
+            return err.response?.data;
+        }        
+    },
+
+    async add_students(listOfStudents) {
+        console.log("Trying to add students to a classroom (API Auth) ... ", listOfStudents);
+        const response = await api.post("/users/addList", listOfStudents);
+        return response.data;
+    
+    },
+
+    async getMyStudents(profID) {
+        try{
+            console.log("Trying to get the students from professor (API Auth) ... ", profID);
+            const response = await api.get("/users/getMyStudents", { 
+                params: {profID: Number(profID)}
+            });
+            return response?.data;
+        } catch (err) {
+            return (err.response)
+        }
+    },
+
     async restoreSession() {
         console.log("Trying to restore the session pt1")
         try {

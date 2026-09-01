@@ -54,7 +54,6 @@ def getClassStudents(groupID:int, session: Session = Depends(get_session)):
 def getClassStudents(groupID:int, session: Session = Depends(get_session)):
     print("getting the informations for the classroom with id: ", groupID)
     group = session.scalar(select(Groups).where(Groups.group_id == groupID))
-    print(group)
     return group
 
 
@@ -62,8 +61,27 @@ def getClassStudents(groupID:int, session: Session = Depends(get_session)):
 def update_group(group: dict, session: Session = Depends(get_session)):
     print("Updating group...")
     id = list(group.keys())[0]
-    db_user = session.scalar(select(Groups).where(Groups.group_id == int(id)))
+    db_group = session.scalar(select(Groups).where(Groups.group_id == int(id)))
     for (key, value) in group[id].items():
-        setattr(db_user, key, value)
+        if (key == "is_active"):
+            if value == "activate":
+                setattr(db_group, key, True)
+            else:
+                setattr(db_group, key, False)
+        else: 
+            setattr(db_group, key, value)
     session.commit()
     return {"message": "Group updated"}
+
+@router.delete("/delete", status_code=HTTPStatus.OK)
+def delete_group(id: int, session: Session = Depends(get_session)):
+    print("Deleting group ...")
+    db_group = session.scalar(select(Groups).where(Groups.group_id == id))
+    if not db_group:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="Group not found"
+        )
+
+    session.delete(db_group)
+    session.commit()
+    return {"message": "Group deleted successfully."}

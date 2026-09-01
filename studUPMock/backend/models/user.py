@@ -24,6 +24,6 @@ class User:
     first_visit: Mapped[bool] = mapped_column(init=False, default=True)
     classroom_id: Mapped[int] = mapped_column(ForeignKey("groups.group_id"), nullable=True)
     school: Mapped[str] = mapped_column(nullable=False)
-    professor: Mapped[str]
+    professor_id: Mapped[int] = mapped_column(nullable=True)
 
     classroom: Mapped["Groups"] = relationship(foreign_keys=[classroom_id], back_populates="student", init=False)

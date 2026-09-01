@@ -5,6 +5,7 @@ table_registry = registry()
 
 from .user import User
 from .groups import Groups
+from .exams import Exams
 # Ajoute tous tes autres modèles ici
 
 # Exporte-les
@@ -12,4 +13,5 @@ __all__ = [
     "table_registry",
     "User",
     "Groups",
+    "Exams",
 ]

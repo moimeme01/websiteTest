@@ -110,7 +110,7 @@ const Login = (e) => {
                     />
                 </fieldset>
                 
-                <button disabled={!user || !pwd}> Sign In </button>
+                <button className={"button--primary"} disabled={!user || !pwd}> Sign In </button>
             </form>
             <p>
                 Don't have an account?<br/>

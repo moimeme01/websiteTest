@@ -18,7 +18,7 @@ class UserPublic(BaseModel):
     role: str
     classroom_id: int
     school: str
-    professor: str
+    professor_id: int
     authorized: bool
     
 
@@ -35,8 +35,16 @@ class UserRegister(BaseModel):
     role: str
     classroom_id: int
     school: str
-    professor: str
+    professor_id: int
 
+class UserRegisterByProf(BaseModel):
+    firstName: str
+    lastName: str
+    username: str
+    password: str
 
+class CreatedResponse(BaseModel): 
+    userData: List[UserRegisterByProf]
+    
 class AdminResponse(BaseModel):
     users: List[UserPublic]

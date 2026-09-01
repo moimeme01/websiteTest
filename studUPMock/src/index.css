@@ -9,6 +9,27 @@
 	box-sizing:border-box
 }
 
+:root {
+  --class-teal: #387f81;
+  --class-teal-dark: #276669;
+  --class-teal-soft: #eaf5f4;
+
+  --class-coral: #ef665b;
+  --class-coral-soft: #ffe9e7;
+
+  --class-yellow: #e6ae3d;
+  --class-yellow-soft: #fff5db;
+  --class-yellow-border: #f6d993;
+
+  --class-text: #18212f;
+  --class-text-muted: #697586;
+  --class-border: #e7ebef;
+  --class-background: #ffffff;
+  --class-surface: #f8fafb;
+}
+
+/* Main elements */ 
+
 html
 {
 	font-family:'Nunito',sans-serif;
@@ -53,6 +74,62 @@ section
 	justify-content:left;
 	align-items:center;
 	padding:1rem
+}
+
+button {
+  border: 1px solid var(--class-teal);
+  background: var(--class-teal);
+  color: #ffffff;
+
+  box-shadow: 0 4px 10px rgba(56, 127, 129, 0.2);
+}
+
+
+/* --- classes for main elements --- */
+
+/* -- table -- */
+.table-container
+{
+	width:100%;
+	overflow-x:auto;
+	overflow-y:auto;
+	background:#fff;
+	border:1px solid #e9e9e9;
+	border-radius:12px;
+	box-shadow:0 4px 20px #0000000d
+}
+
+.table-container h1
+{
+	font-family:'Nunito'
+}
+
+/* -- buttons -- */
+.button--primary {
+  border: 1px solid var(--class-teal);
+  background: var(--class-teal);
+  color: #ffffff;
+
+  box-shadow: 0 4px 10px rgba(56, 127, 129, 0.2);
+}
+
+.button--primary:hover {
+  border-color: var(--class-teal-dark);
+  background: var(--class-teal-dark);
+
+  box-shadow: 0 6px 14px rgba(56, 127, 129, 0.28);
+}
+
+.button--secondary {
+  border: 1px solid var(--class-teal);
+  background: #ffffff;
+  color: var(--class-teal);
+}
+
+.button--secondary:hover {
+  background: var(--class-teal-soft);
+  border-color: var(--class-teal-dark);
+  color: var(--class-teal-dark);
 }
 
 .welcome_message
@@ -656,143 +733,8 @@ button
 	grid-template-columns:repeat(3,1fr);
 	width:100%;
 	padding:25px 15px;
-	gap:15px
-}
-
-.recapClassCard
-{
-	display:flex;
-	flex-direction:column;
-	font-family:'Nunito Sans',sans-serif;
-	width:400px;
-	height:fit-content;
-	border-color:#4B55631F;
-	border-style:solid;
-	border-radius:20px;
-	padding:15px;
-	gap:10px
-}
-
-.recapClassCard p
-{
-	font-size:10px;
-	font-weight:400
-}
-
-.recapClassCard .line1
-{
-	width:100%;
-	display:flex;
-	flex-direction:row;
-	justify-content:flex-start;
-	gap:10px
-}
-
-.recapClassCard .line2
-{
-	width:100%;
-	display:flex;
-	flex-direction:row;
-	justify-content:space-between
-}
-
-.recapClassCard .title
-{
-	display:flex;
-	flex-direction:column
-}
-
-.recapClassCardLogo
-{
-	align-items:center;
-	justify-content:center;
-	border-radius:10px;
-	padding:5px
-}
-
-.recapClassCard .title_className
-{
-	font-family:'Fraunces','serif';
-	font-size:24px;
-	font-weight:600
-}
-
-.recapClassCard .scoreRecap
-{
-	display:flex;
-	flex-direction:row;
-	justify-content:center;
-	align-items:center;
-	width:fit-content;
-	border-color:#FA03;
-	background-color:#FA03;
-	border-style:solid;
-	border-radius:10px
-}
-
-.recapClassCard .scoreRecap h2
-{
-	color:#FFAA00c6
-}
-
-.recapClassCard .title_classText
-{
-	font-family:'Nunito Sans','serif';
-	font-size:15px;
-	font-weight:600
-}
-
-.recapClassCard .buttonLine
-{
-	display:flex;
-	flex-direction:row;
-	justify-content:flex-end;
-	gap:10px
-}
-
-.recapClassCard .buttonLine .button1
-{
-	background-color:#FFF;
-	border-color:#387F81;
-	border-style:solid;
-	border-radius:5px;
-	color:#387F81;
-	padding:7px;
-	gap:5px;
-	display:flex;
-	flex-direction:row;
-	align-items:center
-}
-
-.recapClassCard .buttonLine .button2
-{
-	background-color:#387F81;
-	border-color:#387F81;
-	border-style:solid;
-	border-radius:5px;
-	color:#FFF;
-	padding:7px;
-	gap:5px;
-	display:flex;
-	flex-direction:row;
-	align-items:center
-}
-
-.recapClassCard .buttonLine .button1 p
-{
-	font-weight:400;
-	font-size:14px
-}
-
-.recapClassCard .buttonLine .button2 p
-{
-	font-weight:400;
-	font-size:14px
-}
-
-.recapClassCard .buttonLine .button2:hover,.button1:hover
-{
-	cursor:pointer
+	gap:15px;
+	align-items: start;
 }
 
 .ClassroomHeader .StatBox
@@ -813,3 +755,395 @@ button
 .editInput {
 	width: auto;
 }
+
+/* --- modal window add students --- */
+
+.modalNewStudents {
+	border-radius: 18px;
+	border: 1px solid var(--class-border);
+	padding: 18px;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	translate: -50% -50%;
+
+	background: var(--class-background);
+	
+}
+
+.addStudents-modal-table
+{
+	width:100%;
+	border-collapse:collapse;
+	font-family:Inter,Arial,sans-serif;
+	font-size:14px;
+	color:#333
+}
+
+.addStudents-modal-table th
+{
+	padding:16px;
+	text-align:center;
+    justify-content: center;
+	background:#f8fafc;
+	color:#64748b;
+	font-size:12px;
+	font-weight:600;
+	text-transform:uppercase;
+	letter-spacing:.05em;
+    line-height: 2;
+	border-bottom:1px solid #e5e7eb
+}
+
+.addStudents-modal-table th:hover
+{
+	cursor:pointer
+}
+
+.addStudents-modal-table td
+{
+	padding:16px;
+	border-bottom:1px solid #f0f0f0;
+	text-align:center;
+}
+
+
+.class-card section {
+  min-height: 0;
+  width: auto;
+}
+
+
+
+/* Carte principale */
+.class-card {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  padding: 18px;
+  background: var(--class-background);
+  border: 1px solid var(--class-border);
+  border-radius: 18px;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.03),
+    0 8px 24px rgba(15, 23, 42, 0.06);
+
+  color: var(--class-text);
+  font-family: "Nunito Sans", sans-serif;
+
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.class-card:hover {
+  transform: translateY(-3px);
+  border-color: #d6dedf;
+  box-shadow:
+    0 4px 10px rgba(15, 23, 42, 0.05),
+    0 16px 32px rgba(15, 23, 42, 0.1);
+}
+
+
+/* En-tête */
+.class-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.class-card__identity {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+}
+
+.class-card__icon {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+}
+
+.class-card__icon--coral {
+  color: var(--class-coral);
+  background: var(--class-coral-soft);
+}
+
+.class-card__title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.class-card__title {
+  margin: 0;
+  color: var(--class-text);
+  font-family: "Fraunces", serif;
+  font-size: 25px;
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.class-card__status {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 4px 8px;
+  border: 1px solid #f2d5d1;
+  border-radius: 999px;
+
+  background: #fff7f6;
+  color: #bd5148;
+
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.class-card__subtitle {
+  margin: 6px 0 0;
+  color: var(--class-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.class-card__menu {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 10px;
+
+  background: transparent;
+  color: var(--class-text-muted);
+  cursor: pointer;
+
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.class-card__menu:hover {
+  background: var(--class-surface);
+  color: var(--class-text);
+}
+
+
+/* Trois statistiques */
+.class-card__stats {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	overflow: hidden;
+	height: auto;
+	border: 1px solid var(--class-border);
+	border-radius: 14px;
+	background: var(--class-surface);
+}
+
+.class-stat {
+  min-width: 0;
+  padding: 10px 12px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.class-stat + .class-stat {
+  border-left: 1px solid var(--class-border);
+}
+
+.class-stat__top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--class-teal);
+}
+
+.class-stat__value {
+  color: var(--class-text);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.class-stat__label {
+  color: var(--class-text-muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+
+/* Bloc du dernier test */
+.class-card__test {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 12px;
+	height: auto;
+	padding: 14px;
+	border: 1px solid var(--class-border);
+	border-radius: 14px;
+	background: #ffffff;
+}
+
+.class-card__test-icon {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+  color: var(--class-teal);
+  background: var(--class-teal-soft);
+}
+
+.class-card__test-details {
+  min-width: 0;
+  flex: 1;
+}
+
+.class-card__eyebrow {
+  margin: 0 0 3px;
+  color: var(--class-text-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.class-card__test-title {
+  overflow: hidden;
+  margin: 0;
+
+  color: var(--class-text);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.class-card__date {
+  margin: 4px 0 0;
+  color: var(--class-text-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.class-card__score {
+  flex: 0 0 auto;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  padding: 9px 10px;
+  border: 1px solid var(--class-yellow-border);
+  border-radius: 10px;
+
+  color: var(--class-yellow);
+  background: var(--class-yellow-soft);
+
+  font-size: 15px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+
+/* Boutons */
+.class-card__actions {
+  display: grid;
+  height: auto;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.class-card__button {
+  min-height: 36px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  padding: 9px 12px;
+  margin: 0;
+  border-radius: 10px;
+
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.class-card__button:active {
+  transform: translateY(1px);
+}
+
+
+/* Téléphone étroit */
+@media (max-width: 390px) {
+  .class-card {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .class-card__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .class-stat + .class-stat {
+    border-top: 1px solid var(--class-border);
+    border-left: 0;
+  }
+
+  .class-card__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .class-card__test {
+    align-items: flex-start;
+  }
+
+  .class-card__score {
+    padding: 8px;
+    font-size: 13px;
+  }
+}
+

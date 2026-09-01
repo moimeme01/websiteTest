@@ -1,15 +1,73 @@
-from fastapi import APIRouter, Depends, HTTPException, Header
+import os, io, secrets, string, smtplib
+from fastapi import APIRouter, Depends, HTTPException, Header, Body
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from http import HTTPStatus
-from typing import Optional
+from typing import Optional, Annotated
 from jose import JWTError
+from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib.units import cm
+from dotenv import dotenv_values
 
-from core.security import decode_token
-from schemas.user import AdminResponse, UserPublic
+from core.security import decode_token, hash_password
+from schemas.user import AdminResponse, UserPublic, UserRegister, UserRegisterByProf, CreatedResponse
 from models.user import User
 from database import get_session
 
+
+env = dotenv_values("./.env")
+
+def generate_password(length):
+    alphabet = string.ascii_letters + string.digits
+    password = "".join(secrets.choice(alphabet) for _ in range(length))
+    return password
+
+def createAndSendPDF(liste, email):
+    buffer = io.BytesIO()
+    document = SimpleDocTemplate(buffer, pagesize=A4)
+    elements = []
+
+    table = Table(liste)
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, 0), 12),
+        ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+        ("BACKGROUND", (0, 1), (-1, -1), colors.white),
+        ("GRID", (0, 0), (-1, -1), 1, colors.black),
+    ]))
+
+    elements.append(table)
+    document.build(elements)
+
+    message = MIMEMultipart()
+    message["Subject"] = "New students to your classrooms."
+    message["From"] = env["EMAIL_SENDER"]
+    message["To"] = env["EMAIL_RECEIVER"]
+    body = f"""\
+        You successfully added new students to your classroom. 
+
+        Here is the PDF document with their username and password.
+
+        """
+    message.attach(MIMEText(body, "plain"))
+
+    part = MIMEApplication(buffer.getvalue(), _subtype="pdf")
+    part.add_header("Content-Disposition",
+        'attachment; filename="newstudents.pdf"',
+    )
+    message.attach(part)
+    
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        server.login(env["EMAIL_SENDER"], env["EMAIL_KEY"])
+        server.sendmail(env["EMAIL_SENDER"], env["EMAIL_RECEIVER"], message.as_string())
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -123,3 +181,69 @@ def get_current_user_profile(session: Session = Depends(get_session), current_us
         raise HTTPException(status_code=404, detail="User not found")
     
     return dbuser
+
+@router.delete("/delete", status_code=HTTPStatus.OK)
+def delete_user(id: int, session: Session = Depends(get_session)):
+    print("Deleting user ...")
+    db_user = session.scalar(select(User).where(User.id == id))
+    if not db_user:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="User not found"
+        )
+
+    session.delete(db_user)
+    session.commit()
+    return {"message": "User deleted successfully."}
+
+
+@router.post("/addList", status_code=HTTPStatus.CREATED)
+def add_new_students(liste : Annotated[list[UserRegister], Body()], session: Session = Depends(get_session)):
+    print("Adding list of students ...")
+    addedUsers = [["First name", "Last name", "Username", "Password"]]
+    for elements in liste:
+        username = f"{elements.firstName}{elements.lastName}"
+        generatedPwd = generate_password(10)
+        hashed_generated_password = hash_password(generatedPwd)
+        db_user = session.scalar(select(User).where((User.firstName == elements.firstName) & (User.lastName == elements.lastName)))
+        if db_user: 
+            session.rollback()
+            raise HTTPException(
+                status_code=HTTPStatus.CONFLICT, detail=f"User with firstName: {db_user.firstName}, and lastname: {db_user.lastName} already exists."
+        )
+        email = f"{username}@addbyprof.com"
+        dbuser = User(
+            firstName=elements.firstName,
+            lastName=elements.lastName,
+            username=username,
+            password=hashed_generated_password,
+            email=email,
+            role=elements.role,
+            classroom_id=elements.classroom_id,
+            school=elements.school,
+            professor_id=elements.professor_id
+        )
+
+        dbuser.authorized = True
+        session.add(dbuser)
+
+        addedUsers.append([
+            elements.firstName,
+            elements.lastName,
+            username,
+            generatedPwd
+        ])
+    session.commit()
+
+
+    createAndSendPDF(addedUsers, "email")
+    return {
+        "status": "success",
+        "message": f"{len(liste)} student(s) added successfully.",
+        "count": len(liste),
+    }
+
+@router.get("/getMyStudents", status_code=HTTPStatus.OK, response_model=AdminResponse)
+def get_students(profID: int, session: Session = Depends(get_session)):
+    print("getting the students for the professor with id: ", profID)
+    students = session.scalars(select(User).where(User.professor_id == profID)).all()
+    return {"users": students}
