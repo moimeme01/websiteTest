@@ -16,7 +16,7 @@ const MesExamens = () => {
     useEffect(() => {
         fetchMyTests(me)
     }, [me]);
- 
+
     async function fetchMe(){
         try {
             console.log("Getting my ID")
@@ -52,12 +52,12 @@ const MesExamens = () => {
                             <th scope="col">description </th>
                             <th scope="col">chapter </th>
                             <th scope="col">level </th>
-                            <th scope="col">created_at </th>
-                            <th scope="col">estimated_duration </th>
-                            <th scope="col">opening_date </th>
-                            <th scope="col">closing_date </th>
-                            <th scope="col">random_question_order </th>
-                            <th scope="col">show_score </th>
+                            <th scope="col">created at </th>
+                            <th scope="col">estimated duration (minutes)</th>
+                            <th scope="col">opening date </th>
+                            <th scope="col">closing date </th>
+                            <th scope="col">random question order </th>
+                            <th scope="col">show score </th>
                         </tr>
                     </thead>
                     <tbody>

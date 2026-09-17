@@ -11,8 +11,8 @@ class ExamBase(BaseModel):
     title: str
     description: str
     estimated_duration: int
-    opening_date: date
-    closing_date: date
+    opening_date: datetime
+    closing_date: datetime
     random_question_order: bool
     show_score: bool
 
@@ -26,7 +26,7 @@ class ExamLine(BaseModel):
     professor_id: int
     title: str
     description: str
-    estimated_duration: timedelta
+    estimated_duration: int
     opening_date: date
     closing_date: date
     random_question_order: bool

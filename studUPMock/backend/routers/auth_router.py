@@ -48,7 +48,7 @@ def register_user(user: UserRegister, session: Session = Depends(get_session)):
         role=user.role,
         classroom_id=user.classroom_id,
         school=user.school,
-        professor=user.professor
+        professor_id=user.professor_id
     )
 
     session.add(dbuser)

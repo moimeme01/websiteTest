@@ -5,7 +5,7 @@ import { examsService } from "../api/exams";
 import { Link, useNavigate } from "react-router-dom";
 import { GraduationCap, UsersRound, Trophy, FileText, CalendarDays, TrendingUp, ArrowRight, Ellipsis} from 'lucide-react';
 
-function ProfHeader( { me, myClasses, myStudents } ) {
+function ProfHeader( { me, myClasses, myStudents, myTests } ) {
     return (
         <>
         <div className="profRecap">
@@ -14,7 +14,7 @@ function ProfHeader( { me, myClasses, myStudents } ) {
                     <GraduationCap className="graduationLogo" size={55} style={{strokeWidth: 1.5}}/>
                     <div className="cardProfSummary">
                         <h1> {myClasses.groups.length} </h1>
-                        <p> classes actives</p>
+                        <p> classes </p>
                     </div>
                 </div>
                 <Link to="" target="_blank"> Voir mes classes </Link>
@@ -24,7 +24,7 @@ function ProfHeader( { me, myClasses, myStudents } ) {
                 <div className="cardSummaryAndLogo">
                     <GraduationCap className="graduationLogo" size={55} style={{strokeWidth: 1.5}}/>
                     <div className="cardProfSummary">
-                        <h1> {myClasses.groups.length} </h1>
+                        <h1> {myTests.exams.length} </h1>
                         <p> tests créés</p>
                     </div>
                 </div>
@@ -147,11 +147,100 @@ function ClassRecap ({ oneClass }) {
     </>)
 }
 
+function TestRecap ({ oneTest }) {
+    const  navigate  = useNavigate();
+    return (<>
+        <div className="class-card">
+            <header className="class-card__header">
+                <div className="class-card__identity">
+                <div className="class-card__icon class-card__icon--coral" style={{
+                        backgroundColor: "#eaffe7",
+                        color:"#60ef5b",
+                    }}>
+                    <UsersRound size={22} />
+                </div>
+
+                <div>
+                    <div className="class-card__title-row">
+                    <h2 className="class-card__title">{oneTest.title}</h2>
+                    </div>
+                    <span className="class-card__status" style={{
+                        borderColor:"#d6f2d1",
+                        backgroundColor: "#f6fff6",
+                        color:"#52bd48" ,
+                    }}>{"Active"}</span>
+                </div>
+                </div>
+
+                <button className="class-card__menu" aria-label="Options de la classe">
+                <Ellipsis size={20} />
+                </button>
+            </header>
+
+            <section className="class-card__stats">
+                <div className="class-stat">
+                <div className="class-stat__top">
+                    <Trophy size={18} />
+                    <span className="class-stat__value">80%</span>
+                </div>
+                <span className="class-stat__label">Moyenne</span>
+                </div>
+
+                <div className="class-stat">
+                <div className="class-stat__top">
+                    <UsersRound size={18} />
+                    <span className="class-stat__value">{oneTest.level}</span>
+                </div>
+                <span className="class-stat__label">Niveau</span>
+                </div>
+
+                <div className="class-stat">
+                <div className="class-stat__top">
+                    <FileText size={18} />
+                    <span className="class-stat__value">3</span>
+                </div>
+                <span className="class-stat__label">Tests</span>
+                </div>
+            </section>
+
+            <section className="class-card__test">
+                <div className="class-card__test-icon">
+                <CalendarDays size={20} />
+                </div>
+
+                <div className="class-card__test-details">
+                <p className="class-card__eyebrow">Dernier test</p>
+                <h3 className="class-card__test-title">Pythagore</h3>
+                <p className="class-card__date">12/04/2026</p>
+                </div>
+
+                <div className="class-card__score">
+                <TrendingUp size={18} />
+                <span>12/20</span>
+                </div>
+            </section>
+
+            <footer className="class-card__actions">
+                <button className="class-card__button button--secondary">
+                <UsersRound size={18} />
+                Voir les élèves
+                </button>
+
+                <button className="class-card__button button--primary" onClick={() => navigate(`mytests/${oneTest.exam_id}`)}>
+                <ArrowRight size={18} />
+                Voir le test
+                </button>
+            </footer>
+        </div>
+
+    </>)
+}
+
 
 const Professor = () => {
     const [me, setMe] = useState(null);
     const [myClasses, setMyClasses] = useState({groups: []});
-    const [myTests, setMyTests] = useState({tests: []});
+    const [myTests, setMyTests] = useState({exams: []});
     const [myStudents, setMyStudents] = useState({users: []});
 
     useEffect(() =>{
@@ -220,17 +309,18 @@ const Professor = () => {
             <h1>
                 Bonjour {me ? me.lastName : null}. 
             </h1>
-            <ProfHeader me={me} myClasses={myClasses} myStudents={myStudents}/>
-            <h1> Mes Classes</h1>
+            <ProfHeader me={me} myClasses={myClasses} myStudents={myStudents} myTests={myTests}/>
+            <h1> Classes actives</h1>
             <div className="RecapMyClasses">    
                 {myClasses.groups.map((group, i) => (
-                    <ClassRecap oneClass={group}/>
+                    group.is_active ? <ClassRecap oneClass={group}/> : null
+                    
                 ))}
             </div>
-            <h1> Mes Tests</h1>
+            <h1> Tests récents</h1>
             <div className="RecapMyClasses">    
-                {myTests.tests?.map((tests, i) => (
-                    <ClassRecap oneClass={tests}/>
+                {myTests.exams.map((exam, i) => (
+                    <TestRecap oneTest={exam}/>
                 ))}
             </div>
             

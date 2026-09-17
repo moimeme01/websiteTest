@@ -56,6 +56,7 @@ const Register = () => {
     const [profList, setProfList] = useState({users: []});
 
     const [errMsg, setErrMsg] = useState('');
+    const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
     useEffect(() => {
@@ -118,7 +119,7 @@ const Register = () => {
         }
         try {
             console.log("trying to register")
-
+            setLoading(true)
             const response = await register(
                 { 
                     firstName: firstName,
@@ -129,10 +130,10 @@ const Register = () => {
                     role: role,
                     classroom_id: classroom_id,
                     school: school,
-                    professor: teacher
+                    professor_id: teacher
                 },
             );
-
+            setLoading(false);
             console.log("finished the register.")
             setSuccess(true);
             setRegisteredUser(userName);
@@ -173,6 +174,10 @@ const Register = () => {
                     <p>
                         <Link to="/home">Go back home</Link>
                     </p>
+                </section>
+            ) : (loading ? (
+                <section>
+                    <h1>Chargement ... </h1>
                 </section>
             ) : (
                 <section className="registerSection">
@@ -427,7 +432,7 @@ const Register = () => {
                         <button className="form-button" disabled={!validLastName || !validFirstName || !validUserName || !validPwd || !validMatch || !validEmail || !role}>Sign Up</button>
                     </form>
                 </section>
-            )}
+            ))}
         </>
     )
 }

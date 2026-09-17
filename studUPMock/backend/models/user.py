@@ -5,6 +5,10 @@ from typing import TYPE_CHECKING
 from .groups import Groups
 from models import table_registry
 
+if TYPE_CHECKING:
+    from .groups import Groups
+    from .affectation import Affectation
+
 @mapped_as_dataclass(table_registry)
 class User: 
     __tablename__ = "users"
@@ -27,3 +31,4 @@ class User:
     professor_id: Mapped[int] = mapped_column(nullable=True)
 
     classroom: Mapped["Groups"] = relationship(foreign_keys=[classroom_id], back_populates="student", init=False)
+    affectations: Mapped[list["Affectation"]] = relationship(foreign_keys="Affectation.user", back_populates="student", init=False)

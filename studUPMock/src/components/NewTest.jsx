@@ -1,76 +1,128 @@
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { data, useNavigate, useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { examsService } from "../api/exams";
+import { Info } from "lucide-react";
+
+const TITLE_REGEX = /^[A-Za-z]{4,12}$/
 
 const NewTest = () => {
 
     const { profID } = useParams();
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [level, setLevel] = useState();
-    const [chapter, setChapter] = useState("");
 
-    const [estimated_duration, setEstimatedDuration] = useState();
-    const [openingDate, setOpeningDate] = useState();
-    const [closingDate, setClosingDate] = useState();
-    const [editOrder, setEditOrder] = useState(Boolean);
-    const [showResult, setShowResult] = useState(Boolean);
-
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        mode:"onBlur",
+        defaultValues: {
+            title:"",
+            description:"",
+            level:0,
+            chapter:"",
+            estimated_duration:"",
+            opening_date:"",
+            closing_date:"",
+            editOrder:"",
+            showResult:"",
+        },
+    })
+    
     const navigate = useNavigate();
 
-    async function handleSaveTest() {
+    const validateTitle = (value) => {
+        if (!value) {return "Titre requis";}
+        if (!TITLE_REGEX.test(value)){
+            return "Le titre doit commencer par une majuscule, contenir uniquement des lettres, et max 12 caractères";
+        }
+        return true;
+    };
+
+    const validateChapter = (value) => {
+        if (!value) {return "Chapitre requis";}
+        if (!TITLE_REGEX.test(value)){
+            return "Le chapitre doit commencer par une majuscule, contenir uniquement des lettres, et max 12 caractères";
+        }
+        return true;
+    };
+
+
+    async function handleSaveTest(data) {
         try{
             console.log("adding the data")
+            console.log(data)
             const test ={
                 professor_id: Number(profID),
-                title: title,
-                description: description,
-                level: Number(level),
-                chapter : chapter,
-                estimated_duration : Number(estimated_duration),
-                opening_date : openingDate,
-                closing_date : closingDate,
-                random_question_order : editOrder,
-                show_score : Boolean(showResult),
+                title: data.title,
+                description: data.description,
+                level: Number(data.level),
+                chapter : data.chapter,
+                estimated_duration : Number(data.estimated_duration),
+                opening_date : data.opening_date,
+                closing_date : data.closing_date,
+                random_question_order : data.editOrder,
+                show_score : Boolean(data.showResult),
             }
             const response = await examsService.newTest(test);
             console.log("Test successfully added")
             navigate("/professor/mestests")
             return response.data;
         } catch (err) {
-            console.log(error);
+            console.log(err);
             return err;
         }
         
     }
 
 
+    const submitForm = (data) => {
+        console.log(data);
+        handleSaveTest(data)
+    }
 
+    const onError = (err) => {
+        console.error(err);
+    }
 
     return (
         <>
         <h1>New Test</h1>
         <div>
-            <form className="register-form">
+            <form className="newtest-form" onSubmit={handleSubmit(submitForm, onError)}>
                 <fieldset className="form-section">
                     <legend> A. Informations générales</legend>
                     <div className="form-field">
                         <label> Titre </label>
                         <input 
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)} 
+                            id="title"
+                            aria-invalid={!!errors.title}
+                            aria-describedby={errors.title ? "title-error" : undefined}
+                            {...register("title", { validate: validateTitle })}
                         />
+                        {errors.title && (
+                            <p id="title-error" className="instructions">
+                                <Info size={12} /> {errors.title.message}
+                            </p>
+                        )}
                     </div>
                     <div className="form-field">
                         <label> Chapitre </label>
                         <input 
-                            value={chapter}
-                            onChange={(e) => setChapter(e.target.value)} 
+                            id="chapter"
+                            aria-invalid={!!errors.chapter}
+                            aria-describedby={errors.chapter ? "chapter-error" : undefined}
+                            { ...register("chapter", {validate: validateChapter})}
                         />
+                        {errors.chapter && (
+                            <p id="chapter-error" className="instructions"> 
+                                <Info size={12} /> {errors.chapter.message}
+                            </p>
+                        )}
                     </div>
                     <div className="form-field">
                         <label> Niveau </label>
-                        <select onChange={(e) => setLevel(e.target.value)}>
+                        <select { ...register("level")}>
                             <option value=""> -- Choisissez un niveau -- </option>
                             <option value={1}> Niveau 1 </option> 
                             <option value={2}> Niveau 2 </option> 
@@ -80,66 +132,61 @@ const NewTest = () => {
                     <div className="form-field">
                         <label> Description </label>
                         <input 
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)} 
+                            id="chapter"
+                            aria-invalid={!!errors.description}
+                            aria-describedby={errors.description ? "description-error" : undefined}
+                            { ...register("description")}
                         />
                     </div>
                 </fieldset>
 
                 <fieldset className="form-section">
-                    <legend> B. Contenu du test</legend>
+                    <legend> B. Assignation </legend>
                 </fieldset>
 
                 <fieldset className="form-section">
-                    <legend> C. Assignation </legend>
+                    <legend> C. Contenu du test</legend>
                 </fieldset>
 
                 <fieldset className="form-section">
                     <legend> D. Paramètres </legend>
                     <div className="form-field">
-                        <label> Durée estimée </label>
+                        <label> Durée estimée (en minutes) </label>
                         <input 
-                            
-                            value={estimated_duration}
-                            onChange={(e) => setEstimatedDuration(e.target.value)} 
+                            { ...register("estimated_duration")} 
                         />
                     </div>
                     <div className="form-field">
                         <label> Ouverture </label>
                         <input
                             type="date" 
-                            value={openingDate}
-                            onChange={(e) => setOpeningDate(e.target.value)} 
+                            { ...register("opening_date")}
                         />
                     </div>
                     <div className="form-field">
                         <label> Fermeture </label>
                         <input 
                             type="date"
-                            value={closingDate}
-                            onChange={(e) => setClosingDate(e.target.value)} 
+                            { ...register("closing_date")}
                         />
                     </div>
                     <div className="form-field">
                         <label> Modifier l'ordre du test </label>
                         <input 
                             type="checkbox"
-                            checked={editOrder}
-                            onChange={(e) => setEditOrder(e.target.value)} 
+                            { ...register("editOrder")}
                         />
                     </div>
                     <div className="form-field">
                         <label> Afficher le score </label>
                         <input 
                             type="checkbox"
-                            checked={showResult}
-                            onChange={(e) => setShowResult(e.target.value)} 
+                            { ...register("showResult")} 
                         />
                     </div>
                 </fieldset>
-                
+                <button className="field-button" > Valider </button>
             </form>
-            <button className="field-button" onClick={handleSaveTest}> Valider </button>
         </div>
         </>
     );

@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from models.user import User
-from models.groups import Groups
+
 from dotenv import dotenv_values
-from routers import users_router, auth_router, group_router, exams_router
+from routers import users_router, auth_router, group_router, exams_router, question_router, affectation_router
 
 app = FastAPI()
 env = dotenv_values("./.env")
@@ -23,7 +22,8 @@ app.include_router(auth_router.router, prefix="/api")
 app.include_router(users_router.router, prefix="/api")
 app.include_router(group_router.router, prefix="/api")
 app.include_router(exams_router.router, prefix="/api")
-
+app.include_router(question_router.router, prefix="/api")
+app.include_router(affectation_router.router, prefix="/api")
 
 @app.get("/")
 def root():
