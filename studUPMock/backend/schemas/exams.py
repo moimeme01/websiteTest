@@ -2,8 +2,7 @@ from pydantic import BaseModel
 from typing import List, Optional, TYPE_CHECKING
 from datetime import datetime, date, timedelta
 
-if TYPE_CHECKING:
-    from .user import UserPublic
+from .questions import QuestionResponse
 
 
 class ExamBase(BaseModel):
@@ -19,6 +18,7 @@ class ExamBase(BaseModel):
     #default values columns
     chapter: str
     level: int
+    
 
 
 class ExamLine(BaseModel):
@@ -27,13 +27,16 @@ class ExamLine(BaseModel):
     title: str
     description: str
     estimated_duration: int
-    opening_date: date
-    closing_date: date
+    opening_date: datetime
+    closing_date: datetime
     random_question_order: bool
     show_score: bool
     created_at: datetime
     chapter: str
     level: int
+    questions: List["QuestionResponse"]
+    is_open: bool
+
 
 class ListExams(BaseModel):
     exams: List[ExamLine]

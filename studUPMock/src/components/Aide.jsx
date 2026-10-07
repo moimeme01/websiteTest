@@ -52,7 +52,7 @@ const Aide = () => {
                 <h2>Je ne parviens pas à me connecter. Comment faire?</h2>
                 <p>
                     Pour toute demande en lien à votre mot de passe, nom d'utilisateur, mail, classes, professeur, ...
-                    contactez nous via le formulaire de contact en bas de page en nous expliquant la demande afin
+                    contactez nous via l'adresse mail suivante: contact@thibaultvanni.ovh en nous expliquant la demande afin
                     que nous puissions rapidement vous aider.
                 </p>
             </div>

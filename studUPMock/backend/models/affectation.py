@@ -19,3 +19,4 @@ class Affectation():
     user: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
 
     student: Mapped["User"] = relationship(foreign_keys=[user], back_populates="affectations", init=False)
+    classroom: Mapped[list["Groups"]] = relationship(foreign_keys=[group], back_populates="affectations", init=False)

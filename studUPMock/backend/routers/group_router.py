@@ -51,9 +51,18 @@ def getClassStudents(groupID:int, session: Session = Depends(get_session)):
     return {"users": classroom.student}
 
 @router.get("/classInfo", status_code=HTTPStatus.OK, response_model=GroupBase)
-def getClassStudents(groupID:int, session: Session = Depends(get_session)):
-    print("getting the informations for the classroom with id: ", groupID)
-    group = session.scalar(select(Groups).where(Groups.group_id == groupID))
+def getClassStudents(group_id:int, prof_id: int, session: Session = Depends(get_session)):
+    print("getting the informations for the classroom with id: ", group_id)
+    group = session.scalar(select(Groups).where(Groups.group_id == group_id))
+    if group is None:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail="Class not found",
+        )
+    if group.professor_id != prof_id: 
+        raise HTTPException(
+            status_code=HTTPStatus.UNAUTHORIZED, detail="You are not allowed to see this page"
+        )
     return group
 
 

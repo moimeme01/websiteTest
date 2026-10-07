@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import { groupService } from "../api/groups";
 import { authService } from "../api/auth";
 
@@ -6,6 +7,8 @@ const MesClasses = () => {
     const [ me, setMe] = useState(null);
     const [ myClasses, setMyClasses ] = useState({groups: []});
     const [ err, setErr ] = useState(null);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchMe();
@@ -61,7 +64,7 @@ const MesClasses = () => {
                             </tr>
                         ) : ( 
                         myClasses.groups.map((group, i) => (
-                                <tr key={group.id} style={{backgroundColor: group.is_active ? "#a4f9a1" : "#f9a1a1"}}>
+                                <tr key={i} style={{backgroundColor: group.is_active ? "#a4f9a1" : "#f9a1a1"}} onClick={() => navigate(`/professor/myclass/${group.group_id}`)}>
                                     <td>{i}</td>
                                     <td>{group.group_id}</td>
                                     <td>{group.professor_id}</td>

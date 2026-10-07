@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .user import User
+    from .affectation import Affectation
 
 @mapped_as_dataclass(table_registry)
 class Groups ():
@@ -21,3 +22,4 @@ class Groups ():
     
 
     student: Mapped[list["User"]] = relationship(foreign_keys="User.classroom_id", back_populates="classroom", init=False, default_factory=list)
+    affectations: Mapped[list["Affectation"]] = relationship(foreign_keys="Affectation.group", back_populates="classroom", init=False)

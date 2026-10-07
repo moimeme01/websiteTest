@@ -760,14 +760,47 @@ button
 .oneTest_header {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
-
-	justify-content: space-between;
-	margin: 10px;
+	width: 100%;
+	padding: 10px;
 	border: 1px solid var(--class-border);
+	border-radius: 25px;
+
+	justify-content: center;
+}
+
+.single-test-header-column{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.single-test-header-column  + .single-test-header-column {
+	border-left: 1px solid var(--class-border);
+}
+
+.single-test-header-column-title {
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	gap: 10px;
+}
+
+.single-test-header-column-content {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	column-gap: 10px;
 }
 
 
+.form-field-column {
+	display: flex;
+	flex-direction: column;
+}
 
+.form-field-line {
+	display: flex;
+	flex-direction: row;
+}
 
 
 /* --- modal window add students --- */

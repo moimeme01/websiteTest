@@ -1,7 +1,26 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { groupService } from "../api/groups";
 import { authService } from "../api/auth";
+
+
+
+function get_cookie(name){
+    let cookieName = name + "=";
+    let cookieArray = document.cookie.split(";")
+    console.log("This is the cookie array: ", cookieArray);
+
+    for (const i in cookieArray) {
+        const element = cookieArray[i];
+        if (element.startsWith(cookieName, 0)){
+            return element.split("=")[1]
+        }
+    }
+}
+
+
+
+
 
 
 function ClassHeader({ group, students }){
@@ -156,14 +175,18 @@ const MaClasse = () => {
     const { groupID } = useParams();
     const [students, setStudents] = useState({users: []});
     const [group, setGroup] = useState({groups: []});
-    const [err, setErrMsg] = useState(null);
+    const [errMsg, setErrMsg] = useState(null);
     const [editing, setEditing] = useState(false);
 
     const modalRef = useRef(null);
+    const navigate = useNavigate();
+
+
+    let prof_id = get_cookie("prof_id")
     
     useEffect(() => {
+        fetchGroup(prof_id, groupID);
         fetchStudents(groupID);
-        fetchGroup(groupID);
         console.log(modalRef)
     }, [editing]);
 
@@ -189,23 +212,29 @@ const MaClasse = () => {
         }
     }
 
-    async function fetchGroup(ID) {
+    async function fetchGroup(prof_id, group_id) {
         try {
             console.log("Info founded for this group ID")
-            const response = await groupService.getClassroomInfo(ID);
+            const response = await groupService.getClassroomInfo(prof_id, group_id);
             console.log(response.data);
             setGroup(response.data);
         } catch (err) {
-            console.log(err);
-            setErr(err);
+            console.log("this is the error: ", err)
+            if (err.response?.status === 401) {
+                console.log("You are not authorize")
+                const detail = err.response?.data?.detail;
+                setErrMsg(detail?.message || 'You cannot access this page');
+            } 
         }
     }
 
     
-    return (<>
+    return (
+    <>
+        {errMsg ? (
+            <h1> Vous n'êtes pas autorisés à accéder à cette classe. </h1>
+        ) : (
         <section className="adminSection" >
-
-            
             <h1>
                 Students of the class {group.name}
             </h1>
@@ -253,6 +282,7 @@ const MaClasse = () => {
 
        
         </section>
+    )}
     </>)
 }
 

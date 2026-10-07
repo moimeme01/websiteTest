@@ -3,34 +3,157 @@ import { useParams } from "react-router-dom";
 import { examsService } from "../api/exams";
 import { authService } from "../api/auth";
 import { groupService } from "../api/groups";
-import { EllipsisVertical, Pencil, Trash } from "lucide-react";
-import { faL } from "@fortawesome/free-solid-svg-icons";
+import { EllipsisVertical, Pencil, Trash, Check, X} from "lucide-react";
+
+function convertDate(date){
+    const interDate = new Date(date)
+    const formattedDate = new Intl.DateTimeFormat('fr-BE', {
+        weekday: 'short',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour:'2-digit',
+        minute:'2-digit',
+        hour12: false
+    }).format(interDate).replace('.', '')
+    return formattedDate
+}
 
 
-function ExamRecap( {affectation, exam} ) {
+function ExamRecap( {affectation, exam, fetchTest} ) {
+    const [editableParams, setEditablesParams] = useState(false);
+    const [editableTitle, setEditableTitle] = useState(false);
+    const [edits, setEdits] = useState({exam_id: exam?.exam_id});
+    const [errMsg, setErr] = useState(null);
+
     const affectedGroups = {groups: (affectation.affectations ?? []).filter(
         (affect) => affect.group 
     )}
 
     const affectedStudents = {users: (affectation.affectations ?? []).filter(
         (affect) => affect.user 
-    )}
+    )} 
+
+    function edit(zone) {
+        if (zone == "params"){
+            setEditablesParams(!(editableParams));
+        } else if (zone == "title"){
+            setEditableTitle(!(editableTitle));
+        }
+        setEdits({exam_id: exam?.exam_id});
+        return true;
+    }
+
+    async function saveEdits(edits){
+        console.log(edits)
+        try {
+            // Add if empty condition 
+            const response = await examsService.updateParams(edits)
+            console.log(response);
+            setEditablesParams(false);
+            setEditableTitle(false);
+            setEdits({exam_id: exam?.exam_id});
+            fetchTest(exam.exam_id);
+        } catch(err) {
+            console.log("Message d'erreur: ", err.response?.data?.detail)
+            setErr(err.response?.data?.detail)
+            setEdits({exam_id: exam?.exam_id});
+        }
+        
+        return true;
+    }
     
+
 
     return (
         <>
-            <section className="oneTest_header">
-                <div>
-                    <h2>{exam.title}</h2> - <h3>{exam.chapter}</h3>
-                    Description: {exam.description}
+            <div className="oneTest_header">
+                <div className="single-test-header-column">
+                    <div className="single-test-header-column-title">
+                        <h2 onClick={() => edit("title")}>{exam.title}</h2> <span>-</span> {editableTitle ? (
+                            <input 
+                                defaultValue={exam.chapter}
+                                onChange={(e) => setEdits(old => ({...old, ["params"]: {...old["params"], chapter: e.target.value}}))}
+                            /> 
+                        ) : ( <h3 style={{"vertical-align":"middle"}}>{exam.chapter}</h3> )}
+                    </div>
+                    <div className="single-test-header-column-content">
+                        Description: {editableTitle ? ( 
+                            <textarea
+                                style={null}
+                                defaultValue={exam?.description}
+                                onChange={(e) => setEdits(old => ({...old, ["params"]: {...old["params"], description: e.target.value}}))}
+                            />
+                        ) : (exam.description)} 
+                    </div>
+                    <button hidden={!editableTitle} onClick={() => saveEdits(edits)}> Sauvegarder </button>
                 </div>
-                <div>
-                    <h2>paramètres</h2>
+                <div className="single-test-header-column">
+                    <h2 onClick={() => edit("params")}> Paramètres </h2>
+                    <span style={{color:"red"}}> {errMsg} </span>
+                    <div className="single-test-header-column-content"> 
+                        <p> Du: {editableParams ? (
+                            <span>
+                                <input 
+                                    type="datetime-local" 
+                                    defaultValue={exam.opening_date}
+                                    onChange={(e) => setEdits(old => ({...old, ["params"]: {...old["params"], opening_date: e.target.value}}))}
+                                />  
+                            </span> 
+                            ) : (exam?.opening_date ? convertDate(String(exam.opening_date)) : "Date Inconnue")}</p>
+                        <p> Score visible? {editableParams ? (
+                            <input 
+                                type="checkbox" 
+                                defaultChecked={exam?.show_score}
+                                onChange={(e) => setEdits(old => ({...old, ["params"]: {...old["params"], show_score: e.target.checked}}))}
+                            /> ) : (exam.show_score ? <Check color="#64ea37"/> : <X color="#f75e5e"/>)} </p>
+                        <p> Au: {editableParams ? (
+                            <span>
+                                <input 
+                                    type="datetime-local" 
+                                    defaultValue={exam.closing_date}
+                                    onChange={(e) => setEdits(old => ({...old, ["params"]: {...old["params"], closing_date: e.target.value}}))}
+                                /> 
+                            </span> 
+                            ) : ( exam?.closing_date ? convertDate(String(exam.closing_date)) : "Date Inconnue")}</p>
+                        <p>Ordre aléatoire? { editableParams ? (
+                            <input 
+                                type="checkbox" 
+                                defaultChecked={exam?.random_question_order}
+                                onChange={(e) => setEdits(old => ({...old, ["params"]: {...old["params"], random_question_order: e.target.checked}}))}/> 
+                            ) : ( exam.random_question_order ? <Check color="#64ea37"/> : <X color="#f75e5e"/>)}</p>
+                    </div>
+                    <button hidden={!editableParams} onClick={() => saveEdits(edits)}> Sauvegarder </button>
                 </div>
-                <div>
-                    <h2>Disponibilités:</h2>{affectedGroups.groups.length} classes - {affectedStudents.users.length} étudiants
+                <div className="single-test-header-column">
+                    <h2>Assignations:</h2>
+                    
+                    <div className="single-test-header-column-content">
+                       {affectation.affectations.length == 0 ? (
+                            <div style={{gridColumn: 1/-1}}>
+                                <span >Ce test n'est assigné à personne.</span>
+                            </div>
+                        ) : (
+                            <>
+                            <div>
+                                <h3> classes </h3>
+                                {affectedGroups.groups.map((group) => (
+                                    <p key={group.classroom.group_id}> {group.classroom.name} </p>
+                                ))}
+                            </div>
+                            <div>
+                                <h3> étudiants </h3>
+                                {affectedStudents.users.map((user) => (
+                                    <p key={user.id}> {user.student.firstName} </p>
+                                ))}
+                            </div>
+                            </>
+                        )}
+                        
+                    </div>
+                    
                 </div>
-            </section>
+            </div>
         </>
     );
 }
@@ -62,8 +185,8 @@ function AddAssignation({fetchAffectations, assignToGroups, assignToUsers, exam}
         }
     }
 
-    return (<>
-        <section className="adminSection">
+    return (
+        <>
             <h2> Assigner </h2>
             { isLoading ? (
                 <>
@@ -98,7 +221,7 @@ function AddAssignation({fetchAffectations, assignToGroups, assignToUsers, exam}
                 </form>
             )}
             
-        </section>
+        
     </>)
 }
 
@@ -220,8 +343,8 @@ function AddQuestion({exam, onAdd, close}){
 
 function QuestionsTable({fetchQuestions, questionList}) {
     const [edit, setEdit] = useState(null);
+    const [editedQuestions, setEditedQuestions] = useState({})
     const [editQuestionID, setEditQuestionID] = useState(null)
-    const [updateQuestions, setUpdateQuestions] = useState({questions: []})
 
     function handleEditRow(id){
         setEditQuestionID((currentID) => currentID === id ? null : id);
@@ -230,14 +353,10 @@ function QuestionsTable({fetchQuestions, questionList}) {
 
     const handleSaveEdits = async (e) => {
         e.preventDefault();
-        if (updateQuestions.questions.length == 0 ) {
-            console.log("No edited questions.")
-        } else {
-            const response = await examsService.editQuestion(updateQuestions);
-            console.log("response from server: ", response.message);
-        }
-        setEditQuestionID;
-        setUpdateQuestions({questions: []});
+        const response = await examsService.editQuestion(editedQuestions);
+        console.log("edited questions are: ", editedQuestions);
+        setEditQuestionID(null)
+        setEdit(null)
         await fetchQuestions(questionList?.questions.at(0).exam_id);
         return true;
     }
@@ -275,11 +394,15 @@ function QuestionsTable({fetchQuestions, questionList}) {
                         </tr>
                     ) : ( 
                     questionList.questions.map((question, i) => (
-                            <tr key={question.question_id}>
+                            <tr key={i}>
                                 <td>{i}</td>
-                                <td>{question.question_text}</td>
+                                <td>{editQuestionID===question.question_id ? <input value={editedQuestions[question.question_id]?.question_text ?? question.question_text} onChange={
+                                    (e) => setEditedQuestions(old => ({...old, [question.question_id]: {...old[question.question_id], question_text: e.target.value}}))
+                                } /> : editedQuestions[question.question_id]?.question_text ?? question.question_text}</td>
                                 <td>{question.notes ? question.notes : "-"}</td>
-                                <td>{question.difficulty ? question.difficulty : "Not defined"}</td>
+                                <td>{editQuestionID === question.question_id ? <input value={editedQuestions[question.question_id]?.difficulty ?? question.difficulty} onChange={
+                                    (e) => setEditedQuestions(old => ({...old, [question.question_id]: {...old[question.question_id], difficulty: e.target.value}}))
+                                }/> : editedQuestions[question.question_id]?.difficulty ?? question?.difficulty ?? "Not defined"}</td>
                                 <td className="action">
                                     <div className="action_cell">
                                         <div className={`actionIcons ${edit === question.question_id ? "open" : ""}`}>
@@ -298,7 +421,7 @@ function QuestionsTable({fetchQuestions, questionList}) {
                     ))}
                 </tbody>
             </table>
-            <button onClick={(e) => handleSaveEdits(e, "groups")} hidden={editQuestionID==null}> Sauvegarder </button>
+            <button onClick={(e) => handleSaveEdits(e)} hidden={editQuestionID==null}> Sauvegarder </button>
 
         </>
     )
@@ -401,17 +524,17 @@ const OneTest = () => {
 
     return(
         <>
-            <ExamRecap affectation={affectation} exam={exam}/>
-            <AddAssignation fetchAffectations={fetchAffectations} assignToUsers={filteredStudents} assignToGroups={filteredGroups} exam={exam}/>
             <section className="adminSection">
+                <ExamRecap affectation={affectation} exam={exam} fetchTest={fetchTest}/>
+                <AddAssignation fetchAffectations={fetchAffectations} assignToUsers={filteredStudents} assignToGroups={filteredGroups} exam={exam}/>
+            
                 <h2> Questions </h2>
                 <QuestionsTable fetchQuestions={fetchQuestions} questionList={questions}/>
                 <button className="class-card__button" onClick={openModal}> Ajouter des questions</button>
                 <dialog id="modal" className="modalNewStudents" ref={modalRef}>
                     <AddQuestion exam={exam} onAdd={() => fetchQuestions(exam.exam_id)} close={closeModal} />
                 </dialog>
-            </section>
-            <section className="adminSection">
+
                 <h2> Soumissions </h2>
             </section>
         </>

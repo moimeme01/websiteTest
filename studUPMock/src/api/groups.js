@@ -53,18 +53,16 @@ export const groupService = {
         }
     },
 
-    async getClassroomInfo(groupID){
-        try {
-            console.log("Getting the infos of the classroom with ID: ", groupID)
-            const response = await api.get("/groups/classInfo", { 
-                params: {groupID: Number(groupID)}
-            });
-            
-            return response;
-        } catch (err) {
-            console.log(err)
-            return err.response?.data;
-        }
+    async getClassroomInfo(prof_id, group_id){
+        
+        console.log("Getting the infos of the classroom with ID: ", group_id)
+        const response = await api.get("/groups/classInfo", { 
+            params: {
+                prof_id: Number(prof_id),
+                group_id: Number(group_id)}
+        });
+        return response;
+        
     },
 
     async update_group(group){

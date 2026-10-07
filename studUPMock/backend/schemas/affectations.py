@@ -3,6 +3,7 @@ from typing import List, TYPE_CHECKING
 
 
 from .user import UserPublic
+from .groups import GroupBase
 
 
 
@@ -16,6 +17,7 @@ class Affectations(BaseModel):
     group: int | None
     user: int | None
     student: UserPublic | None
+    classroom: GroupBase | None
 
 class AffectationList(BaseModel): 
     affectations: List[Affectations]

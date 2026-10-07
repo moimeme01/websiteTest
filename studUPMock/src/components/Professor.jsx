@@ -1,9 +1,9 @@
 import { groupService } from "../api/groups";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { authService } from "../api/auth";
 import { examsService } from "../api/exams";
 import { Link, useNavigate } from "react-router-dom";
-import { GraduationCap, UsersRound, Trophy, FileText, CalendarDays, TrendingUp, ArrowRight, Ellipsis} from 'lucide-react';
+import { GraduationCap, UsersRound, Trophy, FileText, CalendarDays, TrendingUp, ArrowRight, Ellipsis, TriangleRight, FileQuestionMark} from 'lucide-react';
 
 function ProfHeader( { me, myClasses, myStudents, myTests } ) {
     return (
@@ -59,6 +59,18 @@ function ProfHeader( { me, myClasses, myStudents, myTests } ) {
 }
 
 function ClassRecap ({ oneClass }) {
+
+    const modalRef = useRef(null);
+
+
+    const openModal = () => {
+        modalRef.current?.showModal();
+    }
+
+    const closeModal = () => {
+        modalRef.current?.close();
+    };
+
     const  navigate  = useNavigate();
     return (<>
         <div className="class-card">
@@ -132,11 +144,40 @@ function ClassRecap ({ oneClass }) {
             </section>
 
             <footer className="class-card__actions">
-                <button className="class-card__button button--secondary">
+                <button className="class-card__button button--secondary" onClick={openModal} >
                 <UsersRound size={18} />
                 Voir les élèves
                 </button>
 
+                <dialog id="modal" className="modalNewStudents" ref={modalRef}>
+                    <h2>Elèves de la classe {oneClass.name}</h2>
+                    <table className="adminTable">
+                        <thead>
+                            <tr>
+                                <th scope="col"> # </th>
+                                <th scope="col"> Nom </th>
+                                <th scope="col"> Prénom </th>
+                            </tr>
+                        </thead>
+                        <tbody> 
+                            {oneClass.student?.length == 0 ? (
+                                <tr>
+                                    <td colSpan={99}> Il n'y a pas d'élèves dans cette classe</td>
+                                </tr>
+                            ) : (
+                                oneClass.student.map((student, i) => (
+                                    <tr>
+                                        <td> {i} </td>
+                                        <td> {student.firstName}</td>
+                                        <td> {student.lastName}</td>
+                                    </tr>
+                                    
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                    <button onClick={closeModal}> X </button>
+                </dialog>
                 <button className="class-card__button button--primary" onClick={() => navigate(`myclass/${oneClass.group_id}`)}>
                 <ArrowRight size={18} />
                 Voir la classe
@@ -172,53 +213,54 @@ function TestRecap ({ oneTest }) {
                 </div>
                 </div>
 
-                <button className="class-card__menu" aria-label="Options de la classe">
-                <Ellipsis size={20} />
-                </button>
+                <div className="class-stat">
+                    <div className="class-stat__top">
+                        <FileQuestionMark size={18} />
+                        <span className="class-stat__value">{oneTest.questions.length}</span>
+                    </div>
+                    <span className="class-stat__label">Questions</span>
+                </div>
             </header>
 
-            <section className="class-card__stats">
-                <div className="class-stat">
-                <div className="class-stat__top">
-                    <Trophy size={18} />
-                    <span className="class-stat__value">80%</span>
-                </div>
-                <span className="class-stat__label">Moyenne</span>
-                </div>
-
-                <div className="class-stat">
-                <div className="class-stat__top">
-                    <UsersRound size={18} />
-                    <span className="class-stat__value">{oneTest.level}</span>
-                </div>
-                <span className="class-stat__label">Niveau</span>
-                </div>
-
-                <div className="class-stat">
-                <div className="class-stat__top">
-                    <FileText size={18} />
-                    <span className="class-stat__value">3</span>
-                </div>
-                <span className="class-stat__label">Tests</span>
-                </div>
-            </section>
-
             <section className="class-card__test">
-                <div className="class-card__test-icon">
-                <CalendarDays size={20} />
+                <div className="class-card__test-details">
+                    <TriangleRight size={40}/>
                 </div>
 
                 <div className="class-card__test-details">
-                <p className="class-card__eyebrow">Dernier test</p>
-                <h3 className="class-card__test-title">Pythagore</h3>
-                <p className="class-card__date">12/04/2026</p>
+                    <h3 className="class-card__test-title">Description</h3>
+                    <p className="class-card__date">{oneTest.description}</p>
                 </div>
 
-                <div className="class-card__score">
-                <TrendingUp size={18} />
-                <span>12/20</span>
+            </section>
+
+            <section className="class-card__stats">
+                <div className="class-stat">
+                    <div className="class-stat__top">
+                        <Trophy size={18} />
+                        <span className="class-stat__value">80%</span>
+                    </div>
+                    <span className="class-stat__label">Moyenne</span>
+                </div>
+
+                <div className="class-stat">
+                    <div className="class-stat__top">
+                        <UsersRound size={18} />
+                        <span className="class-stat__value">{oneTest.level}</span>
+                    </div>
+                    <span className="class-stat__label">Niveau</span>
+                </div>
+
+                <div className="class-stat">
+                    <div className="class-stat__top">
+                        <FileText size={18} />
+                        <span className="class-stat__value">{oneTest.questions.length}</span>
+                    </div>
+                    <span className="class-stat__label">Questions</span>
                 </div>
             </section>
+
+            
 
             <footer className="class-card__actions">
                 <button className="class-card__button button--secondary">
@@ -253,12 +295,17 @@ const Professor = () => {
         fetchMyTests(me);
     }, [me]);
 
+
+
+
     async function fetchMyID(){
         try {
             console.log("Trying to get my ID...")
             const response = await authService.get_profile();
             console.log("I am: ", response)
             setMe(response);
+            document.cookie = `prof_id=${encodeURIComponent(response.id)}; Max-Age=${7 * 24 * 60 * 60}; Path=/; SameSite=Strict`;
+            console.log("cookies are now: ", document.cookie)
             return response;
         } catch (err) {
             console.log("Error getting my ID: ", err);
@@ -302,6 +349,7 @@ const Professor = () => {
             console.log("There was an error getting my students: ", err)
         }
     }
+
 
     return (
         <>

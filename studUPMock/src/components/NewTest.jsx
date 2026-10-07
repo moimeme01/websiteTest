@@ -2,13 +2,54 @@ import { useEffect, useState } from "react";
 import { data, useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { examsService } from "../api/exams";
+import { authService } from "../api/auth";
+import { groupService } from "../api/groups";
 import { Info } from "lucide-react";
 
 const TITLE_REGEX = /^[A-Za-z]{4,12}$/
 
+function get_cookie(name){
+    let cookieName = name + "=";
+    let cookieArray = document.cookie.split(";")
+
+    for (const i in cookieArray) {
+        const element = cookieArray[i];
+        if (element.startsWith(cookieName, 0)){
+            return element.split("=")[1]
+        }
+    }
+}
+
+
+
 const NewTest = () => {
 
-    const { profID } = useParams();
+    let prof_id = get_cookie("prof_id");
+    const [myClasses, setMyClasses] = useState({groups: []})
+    const [myStudents, setMyStudents] = useState({users: []});
+
+    useEffect(() => {
+        fetchMyClasses(prof_id);
+        fetchMyUsers(prof_id);
+    }, [prof_id]);
+
+    async function fetchMyClasses(id) {
+        try {
+            const result = await groupService.getMyClassrooms(id);
+            setMyClasses(result.data);
+        } catch (err) {
+            console.log("There was an error getting the classes: ", err);
+        }
+    }
+
+    async function fetchMyUsers(id){
+        try {
+            const result = await authService.getMyStudents(id);
+            setMyStudents(result)
+        } catch (err) {
+            console.log("There was an error getting my students: ", err)
+        }
+    }
 
     const {
         register,
@@ -53,7 +94,7 @@ const NewTest = () => {
             console.log("adding the data")
             console.log(data)
             const test ={
-                professor_id: Number(profID),
+                professor_id: Number(prof_id),
                 title: data.title,
                 description: data.description,
                 level: Number(data.level),
@@ -64,6 +105,7 @@ const NewTest = () => {
                 random_question_order : data.editOrder,
                 show_score : Boolean(data.showResult),
             }
+            
             const response = await examsService.newTest(test);
             console.log("Test successfully added")
             navigate("/professor/mestests")
@@ -78,7 +120,7 @@ const NewTest = () => {
 
     const submitForm = (data) => {
         console.log(data);
-        handleSaveTest(data)
+        handleSaveTest(data);
     }
 
     const onError = (err) => {
@@ -142,6 +184,18 @@ const NewTest = () => {
 
                 <fieldset className="form-section">
                     <legend> B. Assignation </legend>
+                    <div className="form-field"> 
+                            {myStudents?.users.map((user, i) => (
+                                <span className="form-field-line"> {user.firstName} : <input key={i} type="checkbox"/> </span>
+                            ))}
+                    </div>
+                    <div className="form-field">
+                        <div className="form-field-grid"> 
+                            {myClasses.groups.map((group, i) => (
+                                <span className="form-field-line"> {group.name} : <input key={i} type="checkbox"/> </span>
+                            ))}
+                        </div>
+                    </div>
                 </fieldset>
 
                 <fieldset className="form-section">
@@ -159,14 +213,14 @@ const NewTest = () => {
                     <div className="form-field">
                         <label> Ouverture </label>
                         <input
-                            type="date" 
+                            type="datetime-local" 
                             { ...register("opening_date")}
                         />
                     </div>
                     <div className="form-field">
                         <label> Fermeture </label>
                         <input 
-                            type="date"
+                            type="datetime-local"
                             { ...register("closing_date")}
                         />
                     </div>

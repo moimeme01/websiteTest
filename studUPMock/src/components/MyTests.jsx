@@ -39,6 +39,20 @@ const MesExamens = () => {
             console.log("Error getting my tests: ", err)
         }
     }
+
+    function convertDate(date){
+        const interDate = new Date(date)
+        const formattedDate = new Intl.DateTimeFormat('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour:'2-digit',
+            minute:'2-digit',
+            hour12: false
+        }).format(interDate).replace(',', ' ')
+        return formattedDate
+    }
+
     
     return (
         <>
@@ -69,17 +83,17 @@ const MesExamens = () => {
                             </tr>
                         ) : ( 
                         myTests.exams.map((test, i) => (
-                                <tr key={test.exam_id}style={{backgroundColor: "#f9a1a1"}}>
+                                <tr key={test.exam_id}style={{backgroundColor: test.is_open ? "#a4f9a1" : "#f9a1a1"}} onClick={() => navigate(`/professor/mytests/${test.exam_id}`)}>
                                     <td>{i}</td>
                                     <td>{test.exam_id}</td>
                                     <td>{test.title}</td>
                                     <td>{test.description}</td>
                                     <td>{test.chapter}</td>
                                     <td>{test.level}</td>
-                                    <td>{test.created_at}</td>
+                                    <td>{convertDate(test.created_at)}</td>
                                     <td>{test.estimated_duration}</td>
-                                    <td>{test.opening_date}</td>
-                                    <td>{test.closing_date}</td>
+                                    <td>{convertDate(test.opening_date)}</td>
+                                    <td>{convertDate(test.closing_date)}</td>
                                     <td>{String(test.random_question_order)}</td>
                                     <td>{String(test.show_score)}</td>
                                 </tr>

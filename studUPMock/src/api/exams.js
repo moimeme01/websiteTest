@@ -91,7 +91,7 @@ export const examsService = {
 
     async editQuestion(updateQuestion) {
         try {
-            console.log("Trying to delete a question ... ", updateQuestion)
+            console.log("Trying to edit questions ... ", updateQuestion)
             const response = await api.put("/questions/edit", updateQuestion);
             return response;
         } catch(err) {
@@ -129,5 +129,14 @@ export const examsService = {
             console.error("FastAPI response:", err.response?.data);
             console.error("Detail:", err.response?.data?.detail);
         }
+    },
+
+    async updateParams(data){
+        console.log("Updating parameters ...")
+        const response = await api.put("exams/update", data);
+        return response;
     }
+
+
+
 }

@@ -47,3 +47,17 @@ def remove_question(question_id: int, session : Session = Depends(get_session)):
     session.delete(question)
     session.commit()
     return{"message": "Question deleted successfully"}
+
+@router.put("/edit", status_code=HTTPStatus.OK)
+def edit_questions(question: dict[int, dict], session: Session = Depends(get_session)):
+    print(f"question is : {question} and is type {type(question)}")
+    for question_id, values in question.items(): 
+        question_db = session.scalar(select(ExamsQuestions).where(ExamsQuestions.question_id ==int(question_id)))
+        print(f"{question_id}: {values}, values are type {type(values)}")
+        if not question_db:
+            return {"message": f"Question with id {question_id} does not exists in database"}
+        for key, element in question[question_id].items():
+            setattr(question_db, key, element)
+            print(f"changed {key} value to : {element}")
+    session.commit()
+    return {"message": "Question updated successfully"}
