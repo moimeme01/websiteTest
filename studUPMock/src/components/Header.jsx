@@ -54,7 +54,7 @@ function Header () {
             </div>
             <div className="header_box_right">
                 <Link className="header_link" hidden={isAuthenticated} to="/aide"> A propos </Link>
-                <Link className="header_link" hidden={!isProfessorConnected}> Rapport </Link>
+                <Link className="header_link" to="/comingsoon" hidden={!isProfessorConnected}> Rapport </Link>
                 <Link className="header_link" hidden={!isProfessorConnected} to="/professor/mestests"> Mes Tests </Link>
                 <Link className="header_link" hidden={!isProfessorConnected} to="/professor/mesclasses"> Mes Classes </Link>
                 <Link className="header_link" to='/aide'> Aide </Link>

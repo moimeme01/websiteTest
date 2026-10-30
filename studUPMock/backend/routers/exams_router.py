@@ -15,7 +15,7 @@ router = APIRouter(prefix="/exams", tags=["Exams"])
 @router.get("/getMyExams", status_code=HTTPStatus.OK, response_model=ListExams)
 def get_my_exams(profID: int, session: Session = Depends(get_session)):
     print(f"Getting the exams for the professor with id {profID}")
-    exams = session.scalars(select(Exams).where(Exams.professor_id == profID)).all()
+    exams = session.scalars(select(Exams).where(Exams.professor_id == int(profID))).all()
     for lines in exams: 
         if (lines.opening_date < datetime.now() and lines.closing_date > datetime.now()):
             lines.is_open = True
@@ -57,9 +57,7 @@ def create_new_exam(exam: ExamBase, session: Session = Depends(get_session)):
 
 @router.put("/update", status_code=HTTPStatus.OK)
 def update_exams(data: dict, session : Session = Depends(get_session)):
-    print("Data recieved: ", data)
     exam = session.scalar(select(Exams).where(Exams.exam_id == data["exam_id"]))
-
     for key, element in data["params"].items():
         if key in ["opening_date", "closing_date"]:
             element = datetime.strptime(element, "%Y-%m-%dT%H:%M")
@@ -71,7 +69,7 @@ def update_exams(data: dict, session : Session = Depends(get_session)):
         raise HTTPException(
             status_code=HTTPStatus.NOT_ACCEPTABLE,
             detail="Closing date must be after the opening date."
-        )
+        )     
     session.commit()
     session.close()
     

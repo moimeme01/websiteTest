@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict
 from typing import List, Optional, TYPE_CHECKING
 from datetime import datetime
 
@@ -6,11 +6,27 @@ if TYPE_CHECKING:
     from .user import UserPublic
 
 
+
 class GroupPublic(BaseModel): 
-    id: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+    group_id: int
     name: str
 
+
+class Affectations(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    exam_id: int
+    group: int | None
+    user: int | None
+    student: "UserPublic | None" = None
+    classroom: GroupPublic | None
+
+
 class GroupBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     group_id: int
     professor_id: int
     name: str
@@ -19,6 +35,7 @@ class GroupBase(BaseModel):
     school: str
     is_active: bool
     student: List["UserPublic"] | None
+    affectations: List[Affectations] | None
 
 
 class GroupRegister(BaseModel):

@@ -6,7 +6,7 @@ import { authService } from "../api/auth";
 import { groupService } from "../api/groups";
 import { Info } from "lucide-react";
 
-const TITLE_REGEX = /^[A-Za-z]{4,12}$/
+const TITLE_REGEX = /^[A-Za-z ]{4,12}$/
 
 function get_cookie(name){
     let cookieName = name + "=";
@@ -129,7 +129,7 @@ const NewTest = () => {
 
     return (
         <>
-        <h1>New Test</h1>
+        <h1>Nouveau test</h1>
         <div>
             <form className="newtest-form" onSubmit={handleSubmit(submitForm, onError)}>
                 <fieldset className="form-section">

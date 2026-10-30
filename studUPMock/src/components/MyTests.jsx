@@ -61,31 +61,29 @@ const MesExamens = () => {
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">exam id</th>
-                            <th scope="col">title </th>
-                            <th scope="col">description </th>
-                            <th scope="col">chapter </th>
-                            <th scope="col">level </th>
-                            <th scope="col">created at </th>
-                            <th scope="col">estimated duration (minutes)</th>
-                            <th scope="col">opening date </th>
-                            <th scope="col">closing date </th>
-                            <th scope="col">random question order </th>
-                            <th scope="col">show score </th>
+                            <th scope="col">Titre</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Chapitre</th>
+                            <th scope="col">Niveau</th>
+                            <th scope="col">Créé le </th>
+                            <th scope="col">Durée estimée (minutes)</th>
+                            <th scope="col">Date d'ouverture </th>
+                            <th scope="col">Date de fermeture </th>
+                            <th scope="col">Ordre aléatoire </th>
+                            <th scope="col">Score disponible </th>
                         </tr>
                     </thead>
                     <tbody>
                         {myTests.exams.at(0) == null ? (
                             <tr>
                                 <td colSpan={99}>
-                                    No tests available
+                                    Pas de tests disponibles
                                 </td>
                             </tr>
                         ) : ( 
                         myTests.exams.map((test, i) => (
-                                <tr key={test.exam_id}style={{backgroundColor: test.is_open ? "#a4f9a1" : "#f9a1a1"}} onClick={() => navigate(`/professor/mytests/${test.exam_id}`)}>
+                                <tr key={test.exam_id} style={{backgroundColor: test.is_open ? "#a4f9a1" : "#f9a1a1"}} onClick={() => navigate(`/professor/mytests/${test.exam_id}`)}>
                                     <td>{i}</td>
-                                    <td>{test.exam_id}</td>
                                     <td>{test.title}</td>
                                     <td>{test.description}</td>
                                     <td>{test.chapter}</td>
@@ -94,15 +92,15 @@ const MesExamens = () => {
                                     <td>{test.estimated_duration}</td>
                                     <td>{convertDate(test.opening_date)}</td>
                                     <td>{convertDate(test.closing_date)}</td>
-                                    <td>{String(test.random_question_order)}</td>
-                                    <td>{String(test.show_score)}</td>
+                                    <td>{test.random_question_order ? "Oui" : "Non"}</td>
+                                    <td>{test.show_score ? "Oui" : "Non"}</td>
                                 </tr>
                             )
                         ))}
                     </tbody>
                 </table>
             </div>
-            <button onClick={() => navigate(`/professor/newtest/${me.id}`)}> Add new test </button>
+            <button onClick={() => navigate(`/professor/newtest/${me.id}`)}> Nouveau test </button>
         </>
     );
 

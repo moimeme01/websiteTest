@@ -228,7 +228,18 @@ const MaClasse = () => {
         }
     }
 
-    
+    async function activate(id){
+        await groupService.update_group({[id] : {"is_active": "activate"}});
+        fetchGroup(prof_id, groupID);
+        return true;
+    }
+
+    async function deleteGroup(id){
+        await groupService.delete_group(id);
+        navigate("/professor/mesclasses")
+        return true;
+    }
+
     return (
     <>
         {errMsg ? (
@@ -236,28 +247,28 @@ const MaClasse = () => {
         ) : (
         <section className="adminSection" >
             <h1>
-                Students of the class {group.name}
+                Classe {group.name}
             </h1>
 
             <ClassHeader group={group} students={students}/>
+            <button hidden={group.is_active} onClick={() => activate(groupID)} > Activer la classe </button>
+            <button onClick={() => deleteGroup(groupID)} > Supprimer la classe </button>
             
-            
-
             <table className="adminTable">
                 <thead>
                     <tr>
-                        <th scope="col">identifiant unique</th>
-                        <th scope="col">First name</th>
-                        <th scope="col">Last Name</th>
-                        <th scope="col">Username</th>
-                        <th scope="col">email</th>
+                        <th scope="col">Identifiant unique</th>
+                        <th scope="col">Prénom</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Nom d'utilisateur</th>
+                        <th scope="col">E-mail</th>
                     </tr>
                 </thead>
                 <tbody>
                     {students.users.at(0) == null ? (
                         <tr>
                             <td colSpan={8}>
-                                No students for this classroom
+                                Il n'y a pas d'étudiants dans cette classe
                             </td>
                         </tr>
                     ) : ( 
@@ -274,13 +285,11 @@ const MaClasse = () => {
                 </tbody>
             </table>
 
-        <button id="open" onClick={openModal}>Ajouter des élèves</button>
+            <button id="open" onClick={openModal}>Ajouter des élèves</button>
 
-        <dialog id="modal"  className="modalNewStudents" ref={modalRef}>
-            <AddStudents group={group} onAdd={() => fetchStudents(groupID)} close={closeModal}/>
-        </dialog>
-
-       
+            <dialog id="modal"  className="modalNewStudents" ref={modalRef}>
+                <AddStudents group={group} onAdd={() => fetchStudents(groupID)} close={closeModal}/>
+            </dialog>
         </section>
     )}
     </>)

@@ -87,13 +87,17 @@ export const authService = {
 
     async getMyStudents(profID) {
         try{
-            console.log("Trying to get the students from professor (API Auth) ... ", profID);
+            console.log("Trying to get the students from professor (API Auth) ... ", Number(profID));
             const response = await api.get("/users/getMyStudents", { 
                 params: {profID: Number(profID)}
             });
             return response?.data;
         } catch (err) {
-            return (err.response)
+            console.log("Error: ", err)
+            console.error("Status:", err.response?.status);
+            console.error("FastAPI response:", err.response?.data);
+            console.error("Detail:", err.response?.data?.detail);
+            return ("Error ", err)
         }
     },
 

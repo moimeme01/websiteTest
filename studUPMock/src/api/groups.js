@@ -89,6 +89,17 @@ export const groupService = {
         }
     },
 
+    async get_latest_exam(class_id){
+        try {
+            const response = await api.get("")
+        } catch (err) {
+            console.log("Error: ", err)
+            console.error("Status:", err.response?.status);
+            console.error("FastAPI response:", err.response?.data);
+            console.error("Detail:", err.response?.data?.detail);
+        }
+    }
+
 
 }
 

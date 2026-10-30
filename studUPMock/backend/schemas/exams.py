@@ -4,6 +4,9 @@ from datetime import datetime, date, timedelta
 
 from .questions import QuestionResponse
 
+if TYPE_CHECKING:
+    
+    from .answers import AnswerListQuestion
 
 class ExamBase(BaseModel):
     professor_id: int
@@ -34,7 +37,7 @@ class ExamLine(BaseModel):
     created_at: datetime
     chapter: str
     level: int
-    questions: List["QuestionResponse"]
+    questions: Optional[List[QuestionResponse]] = None
     is_open: bool
 
 

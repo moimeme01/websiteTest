@@ -6,7 +6,6 @@ from models import Exams
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .exams import Exams
     from .groups import Groups
     from .user import User
 
@@ -19,4 +18,4 @@ class Affectation():
     user: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
 
     student: Mapped["User"] = relationship(foreign_keys=[user], back_populates="affectations", init=False)
-    classroom: Mapped[list["Groups"]] = relationship(foreign_keys=[group], back_populates="affectations", init=False)
+    classroom: Mapped["Groups"] = relationship(foreign_keys=[group], back_populates="affectations", init=False)

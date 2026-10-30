@@ -8,6 +8,7 @@ from .groups import Groups
 from .exams import Exams
 from .exams_questions import ExamsQuestions
 from .affectation import Affectation
+from .questions_answers import QuestionAnswers
 # Ajoute tous tes autres modèles ici
 
 # Exporte-les
@@ -18,4 +19,5 @@ __all__ = [
     "Exams",
     "ExamsQuestions",
     "Affectation",
+    "QuestionAnswers"
 ]

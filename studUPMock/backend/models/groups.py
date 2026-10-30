@@ -22,4 +22,5 @@ class Groups ():
     
 
     student: Mapped[list["User"]] = relationship(foreign_keys="User.classroom_id", back_populates="classroom", init=False, default_factory=list)
-    affectations: Mapped[list["Affectation"]] = relationship(foreign_keys="Affectation.group", back_populates="classroom", init=False)
+    affectations: Mapped[list["Affectation"]] = relationship(foreign_keys="Affectation.group", back_populates="classroom", init=False, default_factory=list)
+    

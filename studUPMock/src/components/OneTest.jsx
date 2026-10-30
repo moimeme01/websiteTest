@@ -20,11 +20,12 @@ function convertDate(date){
 }
 
 
-function ExamRecap( {affectation, exam, fetchTest} ) {
-    const [editableParams, setEditablesParams] = useState(false);
-    const [editableTitle, setEditableTitle] = useState(false);
-    const [edits, setEdits] = useState({exam_id: exam?.exam_id});
+function ExamRecap( {affectation, exam, fetchTest, fetchAffectations, filteredStudents, filteredGroups} ) {
+    const [editMode, setEditMode] = useState(false);
+    const [editsParams, setEditsParams] = useState({exam_id: exam?.exam_id});
+    const [editsAffect, setEditsAffect] = useState({exam_id: exam?.exam_id});
     const [errMsg, setErr] = useState(null);
+    const modalRef = useRef(null);
 
     const affectedGroups = {groups: (affectation.affectations ?? []).filter(
         (affect) => affect.group 
@@ -34,35 +35,43 @@ function ExamRecap( {affectation, exam, fetchTest} ) {
         (affect) => affect.user 
     )} 
 
-    function edit(zone) {
-        if (zone == "params"){
-            setEditablesParams(!(editableParams));
-        } else if (zone == "title"){
-            setEditableTitle(!(editableTitle));
-        }
-        setEdits({exam_id: exam?.exam_id});
+    function edit() {
+        setEditMode(!(editMode));
+        setEditsParams({exam_id: exam?.exam_id});
+        setEditsAffect({exam_id: exam?.exam_id});
         return true;
     }
 
     async function saveEdits(edits){
         console.log(edits)
         try {
-            // Add if empty condition 
-            const response = await examsService.updateParams(edits)
-            console.log(response);
-            setEditablesParams(false);
-            setEditableTitle(false);
-            setEdits({exam_id: exam?.exam_id});
-            fetchTest(exam.exam_id);
+            if (editsParams["params"]){
+                await examsService.updateParams(editsParams)
+                fetchTest(exam.exam_id);  
+            } else if (editsAffect["affectation"]) {
+                await examsService.updateAffect(editsAffect)
+                fetchAffectations(exam.exam_id)
+            }
+            setEditMode(false);
+            setEditsParams({exam_id: exam?.exam_id});
+            setEditsAffect({exam_id: exam?.exam_id});
         } catch(err) {
             console.log("Message d'erreur: ", err.response?.data?.detail)
             setErr(err.response?.data?.detail)
-            setEdits({exam_id: exam?.exam_id});
+            setEditsParams({exam_id: exam?.exam_id});
+            setEditsAffect({exam_id: exam?.exam_id});
         }
-        
         return true;
     }
     
+
+    const openModal = () => {
+        modalRef.current?.showModal();
+    }
+
+    const closeModal = () => {
+        modalRef.current?.close();
+    };
 
 
     return (
@@ -70,81 +79,93 @@ function ExamRecap( {affectation, exam, fetchTest} ) {
             <div className="oneTest_header">
                 <div className="single-test-header-column">
                     <div className="single-test-header-column-title">
-                        <h2 onClick={() => edit("title")}>{exam.title}</h2> <span>-</span> {editableTitle ? (
+                        {editMode ? ( <input 
+                                defaultValue={exam.title}
+                                onChange={(e) => setEditsParams(old => ({...old, ["params"]: {...old["params"], title: e.target.value}}))}
+                            /> ) : (<h2> {exam.title} </h2>)} <span>-</span> {editMode ? (
                             <input 
                                 defaultValue={exam.chapter}
-                                onChange={(e) => setEdits(old => ({...old, ["params"]: {...old["params"], chapter: e.target.value}}))}
+                                onChange={(e) => setEditsParams(old => ({...old, ["params"]: {...old["params"], chapter: e.target.value}}))}
                             /> 
                         ) : ( <h3 style={{"vertical-align":"middle"}}>{exam.chapter}</h3> )}
                     </div>
-                    <div className="single-test-header-column-content">
-                        Description: {editableTitle ? ( 
+                    <div className="single-test-header-column-subtitle">
+                        <h3> Niveau: {editMode ? ( 
+                            <input
+                                type = "number"
+                                style={null}
+                                defaultValue={exam?.level}
+                                onChange={(e) => setEditsParams(old => ({...old, ["params"]: {...old["params"], level: e.target.value}}))}
+                            />
+                        ) : (exam.level)}  </h3>
+                    </div>
+                    <div className="single-test-header-column-description">
+                        Description: {editMode ? ( 
                             <textarea
                                 style={null}
                                 defaultValue={exam?.description}
-                                onChange={(e) => setEdits(old => ({...old, ["params"]: {...old["params"], description: e.target.value}}))}
+                                onChange={(e) => setEditsParams(old => ({...old, ["params"]: {...old["params"], description: e.target.value}}))}
                             />
                         ) : (exam.description)} 
                     </div>
-                    <button hidden={!editableTitle} onClick={() => saveEdits(edits)}> Sauvegarder </button>
                 </div>
                 <div className="single-test-header-column">
                     <h2 onClick={() => edit("params")}> Paramètres </h2>
                     <span style={{color:"red"}}> {errMsg} </span>
                     <div className="single-test-header-column-content"> 
-                        <p> Du: {editableParams ? (
+                        <p> Du: {editMode ? (
                             <span>
                                 <input 
                                     type="datetime-local" 
                                     defaultValue={exam.opening_date}
-                                    onChange={(e) => setEdits(old => ({...old, ["params"]: {...old["params"], opening_date: e.target.value}}))}
+                                    onChange={(e) => setEditsParams(old => ({...old, ["params"]: {...old["params"], opening_date: e.target.value}}))}
                                 />  
                             </span> 
                             ) : (exam?.opening_date ? convertDate(String(exam.opening_date)) : "Date Inconnue")}</p>
-                        <p> Score visible? {editableParams ? (
+                        <p> Score visible? {editMode ? (
                             <input 
                                 type="checkbox" 
                                 defaultChecked={exam?.show_score}
-                                onChange={(e) => setEdits(old => ({...old, ["params"]: {...old["params"], show_score: e.target.checked}}))}
+                                onChange={(e) => setEditsParams(old => ({...old, ["params"]: {...old["params"], show_score: e.target.checked}}))}
                             /> ) : (exam.show_score ? <Check color="#64ea37"/> : <X color="#f75e5e"/>)} </p>
-                        <p> Au: {editableParams ? (
+                        <p> Au: {editMode ? (
                             <span>
                                 <input 
                                     type="datetime-local" 
                                     defaultValue={exam.closing_date}
-                                    onChange={(e) => setEdits(old => ({...old, ["params"]: {...old["params"], closing_date: e.target.value}}))}
+                                    onChange={(e) => setEditsParams(old => ({...old, ["params"]: {...old["params"], closing_date: e.target.value}}))}
                                 /> 
                             </span> 
                             ) : ( exam?.closing_date ? convertDate(String(exam.closing_date)) : "Date Inconnue")}</p>
-                        <p>Ordre aléatoire? { editableParams ? (
+                        <p>Ordre aléatoire? { editMode ? (
                             <input 
                                 type="checkbox" 
                                 defaultChecked={exam?.random_question_order}
-                                onChange={(e) => setEdits(old => ({...old, ["params"]: {...old["params"], random_question_order: e.target.checked}}))}/> 
+                                onChange={(e) => setEditsParams(old => ({...old, ["params"]: {...old["params"], random_question_order: e.target.checked}}))}/> 
                             ) : ( exam.random_question_order ? <Check color="#64ea37"/> : <X color="#f75e5e"/>)}</p>
                     </div>
-                    <button hidden={!editableParams} onClick={() => saveEdits(edits)}> Sauvegarder </button>
                 </div>
                 <div className="single-test-header-column">
-                    <h2>Assignations:</h2>
-                    
+                    <h2>Assignations: {editMode ? <button className="class-card__button" hidden={!(editMode)} onClick={openModal} > Ajouter </button> : null}</h2>
                     <div className="single-test-header-column-content">
                        {affectation.affectations.length == 0 ? (
                             <div style={{gridColumn: 1/-1}}>
-                                <span >Ce test n'est assigné à personne.</span>
+                                <span> Ce test n'est assigné à personne.</span>
                             </div>
                         ) : (
                             <>
                             <div>
                                 <h3> classes </h3>
-                                {affectedGroups.groups.map((group) => (
-                                    <p key={group.classroom.group_id}> {group.classroom.name} </p>
+                                {affectedGroups.groups.map((group) => (editMode ? ( 
+                                    <p key={group.classroom?.group_id}> {group.classroom?.name} <X color="#f75e5e" onClick={(e) => setEditsAffect(old => ({...old, "affectation": {...old.affectation, group: [...(old.affectation?.group ?? []), group.classroom.group_id]}}))}/></p>
+                                ) : (<p key={group.classroom?.group_id}> {group.classroom?.name} </p>)
                                 ))}
                             </div>
                             <div>
                                 <h3> étudiants </h3>
-                                {affectedStudents.users.map((user) => (
-                                    <p key={user.id}> {user.student.firstName} </p>
+                                {affectedStudents.users.map((user) => (editMode ? (
+                                    <p key={user.id}> {user.student.firstName} <X color="#f75e5e" onClick={(e) => setEditsAffect(old => ({...old, "affectation": {...old.affectation, user: [...(old.affectation?.user ?? []), user.student.id]}}))}/></p>
+                                ) : (<p key={user.id}> {user.student.firstName} </p>)
                                 ))}
                             </div>
                             </>
@@ -153,14 +174,19 @@ function ExamRecap( {affectation, exam, fetchTest} ) {
                     </div>
                     
                 </div>
+                <button hidden={editMode} onClick={() => edit()} > Modifier </button>
+                <button hidden={!editMode} onClick={() => {saveEdits(editsParams), saveEdits(editsAffect)}}> Sauvegarder </button>
             </div>
+            <dialog id="modal" className="modalNewStudents" ref={modalRef}>
+                <AddAssignation fetchAffectations={fetchAffectations} assignToUsers={filteredStudents} assignToGroups={filteredGroups} exam={exam} close={closeModal} />
+            </dialog>
         </>
     );
 }
 
-function AddAssignation({fetchAffectations, assignToGroups, assignToUsers, exam}){
-    const [assignGroup, setAssignGroup] = useState(null);
-    const [assignStudents, setAssignStudents] = useState(null);
+function AddAssignation({fetchAffectations, assignToGroups, assignToUsers, exam, close}){
+    const [assignGroup, setAssignGroup] = useState("");
+    const [assignStudents, setAssignStudents] = useState("");
     const [isLoading, setLoading] = useState(false);
 
 
@@ -176,8 +202,8 @@ function AddAssignation({fetchAffectations, assignToGroups, assignToUsers, exam}
                 user: Number(assignStudents)===0 ? null : [Number(assignStudents)]
             })
             setLoading(false)
-            setAssignGroup(null)
-            setAssignStudents(null)
+            setAssignGroup("")
+            setAssignStudents("")
             fetchAffectations(exam.exam_id)
             return null
         } catch (err) {
@@ -198,7 +224,11 @@ function AddAssignation({fetchAffectations, assignToGroups, assignToUsers, exam}
                     <fieldset className="form-section">
                         <div className="form-field">
                             <label> Classes </label>
-                            <select onChange={(e) => setAssignGroup(e.target.value)} disabled={assignToGroups.groups.length === 0}>
+                            <select 
+                                value={assignGroup}
+                                onChange={(e) => setAssignGroup(e.target.value)} 
+                                disabled={assignToGroups.groups.length === 0}
+                            >
                                 <option value="" disabled={assignToGroups.groups.length > 0}> {assignToGroups.groups.length > 0 ? "-- séléctionnez une classe --" : "Vous n'avez pas de classe"} </option>
                                 {assignToGroups.groups.map((group) => (
                                     <option value={group?.group_id} key={group?.group_id}> {group?.name} </option>
@@ -208,7 +238,7 @@ function AddAssignation({fetchAffectations, assignToGroups, assignToUsers, exam}
                         
                         <div className="form-field">
                             <label> Étudiants </label>
-                            <select onChange={(e) => setAssignStudents(e.target.value)} disabled={assignToUsers.users.length === 0}>
+                            <select value={assignStudents} onChange={(e) => setAssignStudents(e.target.value)} disabled={assignToUsers.users.length === 0}>
                                 <option value="" disabled={assignToUsers.users.length > 0}> {assignToUsers.users.length > 0 ? "-- séléctionnez un(e) étudiant(e) --" : "Vous n'avez pas d'étudiants"}</option>
                                 {assignToUsers.users.map((user) => (
                                     <option value={user?.id} key={user?.id}> {user?.lastName} </option>
@@ -217,7 +247,7 @@ function AddAssignation({fetchAffectations, assignToGroups, assignToUsers, exam}
                         </div>
                     </fieldset>
                     
-                    <button className="form-button"> Appliquer </button>
+                    <button className="form-button" onClick={close}> Appliquer </button>
                 </form>
             )}
             
@@ -247,6 +277,7 @@ function AddQuestion({exam, onAdd, close}){
             "question_id": count,
             "exam_id": Number(exam.exam_id),
             "question_text":"",
+            "answer":"",
             "difficulty": ""}]));
     }
 
@@ -262,8 +293,8 @@ function AddQuestion({exam, onAdd, close}){
         }
         for (const element of ListofDict) {
             console.log("checking ", element)
-            if (element.question_text === "") {
-                setErrMsg("Les questions doivent contenir au moins un caractère")
+            if (element.question_text === "" | element.answer === "") {
+                setErrMsg("Les questions et les réponses doivent contenir au moins un caractère")
                 console.error("Question must contain at least one character");
                 return false;
             } 
@@ -310,8 +341,9 @@ function AddQuestion({exam, onAdd, close}){
                         <thead>
                             <tr>
                                 <th scope="col"> # </th>
-                                <th scope="col"> texte </th>
-                                <th scope="col"> difficulté </th>
+                                <th scope="col"> Texte </th>
+                                <th scope="col"> Réponse </th>
+                                <th scope="col"> Difficulté </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -323,6 +355,7 @@ function AddQuestion({exam, onAdd, close}){
                                 <tr key={question?.question_id}>
                                     <td> {question?.question_id} </td>
                                     <td> <input value={question.question_text} onChange={(e) => handleEditRow(question.question_id, "question_text", e.target.value)}/></td> 
+                                    <td> <input value={question.answer} onChange={(e) => handleEditRow(question.question_id, "answer", e.target.value)}/></td>
                                     <td> <input value={question.difficulty} onChange={(e) => handleEditRow(question.question_id, "difficulty", Number(e.target.value))}/></td> 
                                 </tr>
                             )))}
@@ -331,8 +364,8 @@ function AddQuestion({exam, onAdd, close}){
                 </div>
             )}
             <div>
-                <button onClick={handleAddRow} > Nouvelle ligne </button>
-                <button onClick={handleAddAll} > Sauvegarder </button>
+                <button onClick={handleAddRow} hidden={loading}> Nouvelle ligne </button>
+                <button onClick={handleAddAll} hidden={loading}> Sauvegarder </button>
             </div>
             <div>
                 <button onClick={handleClose} > X </button>
@@ -361,8 +394,6 @@ function QuestionsTable({fetchQuestions, questionList}) {
         return true;
     }
 
-
-
     const handleDeleteID = async(e, id) => {
         try {
             console.log("Trying to cancel the question ...")
@@ -380,6 +411,7 @@ function QuestionsTable({fetchQuestions, questionList}) {
                     <tr>
                         <th scope="col"> # </th>
                         <th scope="col"> texte </th>
+                        <th scope="col"> réponse </th>
                         <th scope="col"> notes </th>
                         <th scope="col"> difficulté </th>
                         <th/>
@@ -399,6 +431,10 @@ function QuestionsTable({fetchQuestions, questionList}) {
                                 <td>{editQuestionID===question.question_id ? <input value={editedQuestions[question.question_id]?.question_text ?? question.question_text} onChange={
                                     (e) => setEditedQuestions(old => ({...old, [question.question_id]: {...old[question.question_id], question_text: e.target.value}}))
                                 } /> : editedQuestions[question.question_id]?.question_text ?? question.question_text}</td>
+                                <td> {editQuestionID === question.question_id ? (
+                                    <input value={editedQuestions[question.question_id]?.answers ?? question.answers[0]?.answer_text} onChange={
+                                        (e) => setEditedQuestions(old => ({...old, [question.question_id]: {...old[question.question_id], answers: e.target.value}}))
+                                    }/> ) : (question.answers[0]?.answer_text)}</td>
                                 <td>{question.notes ? question.notes : "-"}</td>
                                 <td>{editQuestionID === question.question_id ? <input value={editedQuestions[question.question_id]?.difficulty ?? question.difficulty} onChange={
                                     (e) => setEditedQuestions(old => ({...old, [question.question_id]: {...old[question.question_id], difficulty: e.target.value}}))
@@ -467,6 +503,7 @@ const OneTest = () => {
         try {
             const result = await examsService.getQuestions(testID)
             setQuestions(result.data)
+            console.log("My questions are the following: ", result.data)
         } catch (err) {
             console.error("Status:", err.response?.status);
             console.error("FastAPI response:", err.response?.data);
@@ -525,8 +562,7 @@ const OneTest = () => {
     return(
         <>
             <section className="adminSection">
-                <ExamRecap affectation={affectation} exam={exam} fetchTest={fetchTest}/>
-                <AddAssignation fetchAffectations={fetchAffectations} assignToUsers={filteredStudents} assignToGroups={filteredGroups} exam={exam}/>
+                <ExamRecap affectation={affectation} exam={exam} fetchTest={fetchTest} fetchAffectations={fetchAffectations} filteredStudents={filteredStudents} filteredGroups={filteredGroups}/>
             
                 <h2> Questions </h2>
                 <QuestionsTable fetchQuestions={fetchQuestions} questionList={questions}/>

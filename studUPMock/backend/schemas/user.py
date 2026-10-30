@@ -16,7 +16,7 @@ class UserPublic(BaseModel):
     username: str
     email: EmailStr
     role: str
-    classroom_id: int
+    classroom_id: Optional[int] = None
     school: str
     professor_id: int
     authorized: bool

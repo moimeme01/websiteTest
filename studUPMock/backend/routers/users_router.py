@@ -245,5 +245,6 @@ def add_new_students(liste : Annotated[list[UserRegister], Body()], session: Ses
 @router.get("/getMyStudents", status_code=HTTPStatus.OK, response_model=AdminResponse)
 def get_students(profID: int, session: Session = Depends(get_session)):
     print("getting the students for the professor with id: ", profID)
+    print("Type of id professor: ", type(profID))
     students = session.scalars(select(User).where(User.professor_id == profID)).all()
     return {"users": students}

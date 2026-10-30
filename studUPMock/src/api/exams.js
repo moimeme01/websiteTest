@@ -11,6 +11,9 @@ export const examsService = {
             return response;
         } catch(err) {
             console.log("Error: ", err)
+            console.error("Status:", err.response?.status);
+            console.error("FastAPI response:", err.response?.data);
+            console.error("Detail:", err.response?.data?.detail);
             return ("Error ", err)
         }
     },
@@ -135,7 +138,27 @@ export const examsService = {
         console.log("Updating parameters ...")
         const response = await api.put("exams/update", data);
         return response;
-    }
+    },
+
+    async updateAffect(data){
+        console.log("Updating affectations ...")
+        const response = await api.put("affectation/update", data);
+        return response;
+    },
+
+    async countExams(id) {
+        try {
+            const response = await api.get("affectation/by_class", {
+                params: {class_id: id}
+            })
+            return response
+        } catch (err) {
+            console.log("Error: ", err)
+            console.error("Status:", err.response?.status);
+            console.error("FastAPI response:", err.response?.data);
+            console.error("Detail:", err.response?.data?.detail);
+        }
+    },
 
 
 

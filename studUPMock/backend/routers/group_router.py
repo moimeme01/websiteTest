@@ -73,10 +73,7 @@ def update_group(group: dict, session: Session = Depends(get_session)):
     db_group = session.scalar(select(Groups).where(Groups.group_id == int(id)))
     for (key, value) in group[id].items():
         if (key == "is_active"):
-            if value == "activate":
-                setattr(db_group, key, True)
-            else:
-                setattr(db_group, key, False)
+            setattr(db_group, key, value=="activate")
         else: 
             setattr(db_group, key, value)
     session.commit()

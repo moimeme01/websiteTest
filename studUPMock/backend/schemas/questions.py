@@ -1,9 +1,12 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
+
+from .answers import AnswerListQuestion
 
 class QuestionRegister(BaseModel):
     question_text: str
     exam_id: int
+    answer: int | str
     difficulty: int | None
 
 class QuestionResponse(BaseModel):
@@ -12,6 +15,7 @@ class QuestionResponse(BaseModel):
     exam_id: int
     notes: int | None
     difficulty: int | None
+    answers : Optional[List[AnswerListQuestion]] = None
 
 
 class QuestionsList(BaseModel):

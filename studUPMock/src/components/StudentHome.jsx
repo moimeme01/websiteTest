@@ -1,11 +1,9 @@
-
-
 const UserConnected = () => {
     return (
         <>
         <section>
             <h1>
-                Well done, you are connected to your user session. 
+                Bienvenue .
             </h1>
         </section>
         </>
