@@ -401,9 +401,7 @@ const Professor = () => {
 
     async function fetchMyID(){
         try {
-            console.log("Trying to get my ID...")
             const response = await authService.get_profile();
-            console.log("I am: ", response)
             setMe(response);
             document.cookie = `prof_id=${encodeURIComponent(response.id)}; Max-Age=${7 * 24 * 60 * 60}; Path=/; SameSite=Strict`;
             console.log("cookies are now: ", document.cookie)
