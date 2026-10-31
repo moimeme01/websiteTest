@@ -3,7 +3,7 @@ from typing import List, Optional, TYPE_CHECKING
 from datetime import datetime
 
 if TYPE_CHECKING:
-    from .user import UserPublic
+    from .user import UserPublic, UserBase
 
 
 
@@ -34,7 +34,7 @@ class GroupBase(BaseModel):
     created_at: datetime
     school: str
     is_active: bool
-    student: List["UserPublic"] | None
+    student: List["UserBase"] | None
     affectations: List[Affectations] | None
 
 

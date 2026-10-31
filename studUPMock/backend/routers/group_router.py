@@ -44,6 +44,15 @@ def getMyClasses(id: int, session: Session = Depends(get_session)):
     my_groups = session.scalars(select(Groups).where(Groups.professor_id == id)).all()
     return {"groups": my_groups}
 
+
+@router.get("/my_classes_student", status_code=HTTPStatus.OK, response_model=GroupAdmin)
+def getMyClassesStudent(id: int, session: Session = Depends(get_session)):
+    my_groups = session.scalars(select(Groups).where(Groups.professor_id == id)).all()
+    return {"groups": my_groups}
+
+
+
+
 @router.get("/classStudents", status_code=HTTPStatus.OK, response_model=AdminResponse)
 def getClassStudents(groupID:int, session: Session = Depends(get_session)):
     print("getting the students for the classroom with id: ", groupID)

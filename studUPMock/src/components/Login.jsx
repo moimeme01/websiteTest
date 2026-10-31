@@ -33,38 +33,27 @@ const Login = (e) => {
             return;
         }
         try {
-            console.log("Searching the DB for the user");
             const response = await login(user, pwd);
-
-            console.log("user found in the database.");
-            
-            console.log("arrived after login.");
-            
             let route;
             if (response.authorized){
                 if (response.role === "admin"){
                     route = "/admin";
                 } else if (response.role === "professor"){
+                    document.cookie = `prof_id=${encodeURIComponent(response.id)}; Max-Age=${7 * 24 * 60 * 60}; Path=/; SameSite=Strict`;
                     route = "/professor"
                 } else {
+                    document.cookie = `student_id=${encodeURIComponent(response.id)}; Max-Age=${7 * 24 * 60 * 60}; Path=/; SameSite=Strict`;
                     route = "/student"
                 }
             } else {
                 route = "/unauthorizedRoute"
             }
-
             setUser("");
             setPwd("");
             setSuccess(true);
-            console.log("All reset")
-            console.log("navigate to route")
-            console.log(route)
             navigate(route);
-            console.log("end of try.")
         } catch (err) {
-            console.log("There is an error.");
-            console.log(err);
-            console.log(err.response?.data?.detail);
+            console.log("There is an error: ", err.response?.data?.detail);
             if (err?.response?.data) {
                 if (err.response?.data?.detail) {
                     setErrMsg(err.response?.data?.detail)

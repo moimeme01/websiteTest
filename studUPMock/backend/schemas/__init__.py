@@ -3,7 +3,7 @@ from sqlalchemy.orm import registry
 
 table_registry = registry()
 
-from .user import UserPublic
+from .user import UserPublic, UserBase
 from .groups import GroupBase, GroupPublic
 from .exams import ExamBase, ExamLine, ListExams
 from .questions import QuestionResponse
@@ -13,6 +13,7 @@ from .affectations import Affectations, AffectRegister
 
 Affectations.model_rebuild()
 UserPublic.model_rebuild()
+UserBase.model_rebuild()
 GroupBase.model_rebuild()
 ExamBase.model_rebuild()
 ExamLine.model_rebuild()
@@ -27,6 +28,7 @@ GroupPublic.model_rebuild()
 __all__ = [
     "table_registry",
     "User",
+    "UserBase",
     "Groups",
     "Exams",
     "ExamsQuestions",
